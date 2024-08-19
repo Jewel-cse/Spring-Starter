@@ -5,6 +5,11 @@ import dev.start.init.dto.EmployeeDto;
 import dev.start.init.entity.Employee;
 import dev.start.init.service.EmployeeService;
 import dev.start.init.util.specification.EmployeeSpecification;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -109,7 +114,6 @@ public class EmployeeController {
                 orderBy.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending()
         );
 
-
         Specification<Employee> specification = Specification.where(EmployeeSpecification.hasEmpCode(empCode))
                 .and(EmployeeSpecification.hasEmpName(empName))
                 .and(EmployeeSpecification.hasEmpDesignation(empDesignation))
@@ -127,6 +131,14 @@ public class EmployeeController {
      * @param id the ID of the entity to retrieve.
      * @return the retrieved {@link Employee}.
      */
+
+    @Operation(summary = "Get a employee by their ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the Employee",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Employee.class)) }),
+            @ApiResponse(responseCode = "404", description = "Employee not found",
+                    content = @Content) })
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.getEmployeeById(id));

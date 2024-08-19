@@ -54,9 +54,9 @@ public class CompanyService {
      * @return the created table
      */
 
-    @PostConstruct
-    public void initCompanyTable(){
-        List<Company>  companies= IntStream.rangeClosed(1,50)
+//    @PostConstruct
+    public void initCompanyTable(int start){
+        List<Company>  companies= IntStream.rangeClosed(start,start+5)
                 .mapToObj(i->new Company("Com_name_"+i,"Com_code_"+i, LocalDate.now().plusDays(i)))
                 .collect(Collectors.toList());
         companyRepository.saveAll(companies);
