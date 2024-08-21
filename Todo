@@ -21,6 +21,13 @@
     Integrated logging with frameworks like Logback or Log4j.
     Different logging levels (INFO, DEBUG, ERROR).
     Centralized logging with tools like ELK (Elasticsearch, Logstash, Kibana) stack.
+        >after configure docker-compose.yml
+        >docker compose up
+        >go to localhost:5601 <request for token>
+        >generate token
+            :docker exec -it <elasticsearch-container-name> /bin/bash
+            :bin/elasticsearch-create-enrollment-token -s kibana
+        >after gives the token
 
 4. Caching:
 

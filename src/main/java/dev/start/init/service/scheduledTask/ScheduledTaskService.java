@@ -33,6 +33,7 @@ public class ScheduledTaskService {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTaskService.class);
 
     private final CompanyService companyService;
+
     @Value("${cron.expression.dailyTask}")
     private String dailyTaskCronExpression;
 
@@ -50,7 +51,7 @@ public class ScheduledTaskService {
      * Used <b>Async</b> to running them asynchronously to prevent blocking when multiple task is running
      * long time running process
      */
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 30000)
     @Async
     public void executeTaskWithFixedRate() {
         try{
@@ -59,7 +60,6 @@ public class ScheduledTaskService {
         }catch (Exception e){
             logger.error("Error occurred during scheduled task execution", e);
         }
-
     }
 
     /**
