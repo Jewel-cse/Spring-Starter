@@ -16,7 +16,7 @@
     JWT (JSON Web Tokens) for stateless authentication.
     OAuth2 for secure API integration.
 
-3. Logging:
+3. Logging:**
 
     Integrated logging with frameworks like Logback or Log4j.
     Different logging levels (INFO, DEBUG, ERROR).
@@ -44,7 +44,7 @@
    Integrating with monitoring tools like Prometheus and Grafana.
    Using Spring Boot Actuator for health checks, metrics, and application insights.
 
-7. Scheduling:
+7. Scheduling:**
 
    Task scheduling with @Scheduled.
    Running periodic tasks or cron jobs.

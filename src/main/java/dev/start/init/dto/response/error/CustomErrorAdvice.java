@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 @ControllerAdvice
 public class CustomErrorAdvice {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomErrorAdvice.class);
+    public static final Logger logger = LoggerFactory.getLogger(CustomErrorAdvice.class);
 
     // Handle validation exceptions
     @ExceptionHandler(MethodArgumentNotValidException.class)

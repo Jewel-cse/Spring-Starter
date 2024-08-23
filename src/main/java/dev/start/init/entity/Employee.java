@@ -60,5 +60,4 @@ public class Employee extends BaseEntity<Long>  {
         this.joiningDate=joiningDate;
     }
 
-
 }
