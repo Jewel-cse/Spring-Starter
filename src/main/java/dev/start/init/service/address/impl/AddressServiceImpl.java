@@ -17,7 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
+
+import static dev.start.init.constants.StorageConstants.MAX_FILE_SIZE;
 
 
 /**
@@ -81,6 +84,9 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressMapper.toEntity(addressDto);
 
         if (file != null && !file.isEmpty()) {
+            if (file.getSize() > MAX_FILE_SIZE) {
+                throw new MaxUploadSizeExceededException(MAX_FILE_SIZE);
+            }
             String fileName = fileStore.storeFile(file, address);
             address.setFileName(fileName);
             address.setFileType(FilenameUtils.getExtension(fileName));
@@ -111,6 +117,9 @@ public class AddressServiceImpl implements AddressService {
 
         addressMapper.updateEntityFromDto(addressDto, existingAddress);
         if (file != null && !file.isEmpty()) {
+            if (file.getSize() > MAX_FILE_SIZE) {
+                throw new MaxUploadSizeExceededException(MAX_FILE_SIZE);
+            }
             String fileName = fileStore.storeFile(file, existingAddress);
             existingAddress.setFileName(fileName);
             existingAddress.setFileType(FilenameUtils.getExtension(fileName));
