@@ -38,6 +38,9 @@ public class SuccessResponse<T> {
     public SuccessResponse(T object) {
         this.response = new SuccessDTO<>(object);
     }
+    public SuccessResponse(String message) {
+        this.response = new SuccessDTO<>(message);
+    }
 
     /**
      * Constructs a new SuccessResponse with the specified object and message.

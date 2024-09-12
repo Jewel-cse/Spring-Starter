@@ -639,3 +639,769 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: E:/Jewel/Project
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 64 more
+2024-08-31 11:36:37.890847+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        id bigint not null,\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        created_at timestamp(6),\000d\000a        created_by varchar(255),\000d\000a        machine_ip varchar(20),\000d\000a        machine_name varchar(100),\000d\000a        public_id varchar(255) not null,\000d\000a        state_id integer default 0,\000d\000a        updated_at timestamp(6),\000d\000a        updated_by varchar(255),\000d\000a        version smallint not null,\000d\000a        email varchar(100) not null,\000d\000a        first_name varchar(100),\000d\000a        is_enabled boolean not null,\000d\000a        last_login timestamp(6),\000d\000a        last_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        password_reset_token varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        id bigint not null,
+        action_id integer default 0,
+        active boolean not null,
+        created_at timestamp(6),
+        created_by varchar(255),
+        machine_ip varchar(20),
+        machine_name varchar(100),
+        public_id varchar(255) not null,
+        state_id integer default 0,
+        updated_at timestamp(6),
+        updated_by varchar(255),
+        version smallint not null,
+        email varchar(100) not null,
+        first_name varchar(100),
+        is_enabled boolean not null,
+        last_login timestamp(6),
+        last_name varchar(100),
+        password varchar(100) not null,
+        password_reset_token varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 11:36:37.946849+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKfuqka493llh9k0imxq2nqkby"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKfuqka493llh9k0imxq2nqkby [42001-224]
+2024-08-31 11:36:37.946849+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id) [42001-224]
+2024-08-31 11:36:37.947848+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe [42001-224]
+2024-08-31 11:36:37.947848+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email) [42001-224]
+2024-08-31 11:36:37.955849+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 11:36:37.964848+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 11:36:37.965847+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 11:48:52.862061+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        id bigint not null,\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        created_at timestamp(6),\000d\000a        created_by varchar(255),\000d\000a        machine_ip varchar(20),\000d\000a        machine_name varchar(100),\000d\000a        public_id varchar(255) not null,\000d\000a        state_id integer default 0,\000d\000a        updated_at timestamp(6),\000d\000a        updated_by varchar(255),\000d\000a        version smallint not null,\000d\000a        email varchar(100) not null,\000d\000a        first_name varchar(100),\000d\000a        is_enabled boolean not null,\000d\000a        last_login timestamp(6),\000d\000a        last_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        password_reset_token varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        id bigint not null,
+        action_id integer default 0,
+        active boolean not null,
+        created_at timestamp(6),
+        created_by varchar(255),
+        machine_ip varchar(20),
+        machine_name varchar(100),
+        public_id varchar(255) not null,
+        state_id integer default 0,
+        updated_at timestamp(6),
+        updated_by varchar(255),
+        version smallint not null,
+        email varchar(100) not null,
+        first_name varchar(100),
+        is_enabled boolean not null,
+        last_login timestamp(6),
+        last_name varchar(100),
+        password varchar(100) not null,
+        password_reset_token varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 11:48:52.867065+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKfuqka493llh9k0imxq2nqkby"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKfuqka493llh9k0imxq2nqkby [42001-224]
+2024-08-31 11:48:52.868065+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id) [42001-224]
+2024-08-31 11:48:52.868065+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe [42001-224]
+2024-08-31 11:48:52.868065+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email) [42001-224]
+2024-08-31 11:48:52.870064+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 11:48:52.878066+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 11:48:52.879069+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:13:38.122352+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        id bigint not null,\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        created_at timestamp(6),\000d\000a        created_by varchar(255),\000d\000a        machine_ip varchar(20),\000d\000a        machine_name varchar(100),\000d\000a        public_id varchar(255) not null,\000d\000a        state_id integer default 0,\000d\000a        updated_at timestamp(6),\000d\000a        updated_by varchar(255),\000d\000a        version smallint not null,\000d\000a        email varchar(100) not null,\000d\000a        first_name varchar(100),\000d\000a        is_enabled boolean not null,\000d\000a        last_login timestamp(6),\000d\000a        last_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        password_reset_token varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        id bigint not null,
+        action_id integer default 0,
+        active boolean not null,
+        created_at timestamp(6),
+        created_by varchar(255),
+        machine_ip varchar(20),
+        machine_name varchar(100),
+        public_id varchar(255) not null,
+        state_id integer default 0,
+        updated_at timestamp(6),
+        updated_by varchar(255),
+        version smallint not null,
+        email varchar(100) not null,
+        first_name varchar(100),
+        is_enabled boolean not null,
+        last_login timestamp(6),
+        last_name varchar(100),
+        password varchar(100) not null,
+        password_reset_token varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:13:38.127351+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKfuqka493llh9k0imxq2nqkby"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKfuqka493llh9k0imxq2nqkby [42001-224]
+2024-08-31 12:13:38.127351+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id) [42001-224]
+2024-08-31 12:13:38.128355+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe [42001-224]
+2024-08-31 12:13:38.128355+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email) [42001-224]
+2024-08-31 12:13:38.130352+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:13:38.138356+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:13:38.139361+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:22:27.262395+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        id bigint not null,\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        created_at timestamp(6),\000d\000a        created_by varchar(255),\000d\000a        machine_ip varchar(20),\000d\000a        machine_name varchar(100),\000d\000a        public_id varchar(255) not null,\000d\000a        state_id integer default 0,\000d\000a        updated_at timestamp(6),\000d\000a        updated_by varchar(255),\000d\000a        version smallint not null,\000d\000a        email varchar(100) not null,\000d\000a        first_name varchar(100),\000d\000a        is_enabled boolean not null,\000d\000a        last_login timestamp(6),\000d\000a        last_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        password_reset_token varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        id bigint not null,
+        action_id integer default 0,
+        active boolean not null,
+        created_at timestamp(6),
+        created_by varchar(255),
+        machine_ip varchar(20),
+        machine_name varchar(100),
+        public_id varchar(255) not null,
+        state_id integer default 0,
+        updated_at timestamp(6),
+        updated_by varchar(255),
+        version smallint not null,
+        email varchar(100) not null,
+        first_name varchar(100),
+        is_enabled boolean not null,
+        last_login timestamp(6),
+        last_name varchar(100),
+        password varchar(100) not null,
+        password_reset_token varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:22:27.278019+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKfuqka493llh9k0imxq2nqkby"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKfuqka493llh9k0imxq2nqkby [42001-224]
+2024-08-31 12:22:27.278019+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id) [42001-224]
+2024-08-31 12:22:27.278019+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe [42001-224]
+2024-08-31 12:22:27.278019+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email) [42001-224]
+2024-08-31 12:22:27.278019+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:22:27.278019+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:22:27.278019+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:23:19.282086+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        id bigint not null,\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        created_at timestamp(6),\000d\000a        created_by varchar(255),\000d\000a        machine_ip varchar(20),\000d\000a        machine_name varchar(100),\000d\000a        public_id varchar(255) not null,\000d\000a        state_id integer default 0,\000d\000a        updated_at timestamp(6),\000d\000a        updated_by varchar(255),\000d\000a        version smallint not null,\000d\000a        email varchar(100) not null,\000d\000a        first_name varchar(100),\000d\000a        is_enabled boolean not null,\000d\000a        last_login timestamp(6),\000d\000a        last_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        password_reset_token varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        id bigint not null,
+        action_id integer default 0,
+        active boolean not null,
+        created_at timestamp(6),
+        created_by varchar(255),
+        machine_ip varchar(20),
+        machine_name varchar(100),
+        public_id varchar(255) not null,
+        state_id integer default 0,
+        updated_at timestamp(6),
+        updated_by varchar(255),
+        version smallint not null,
+        email varchar(100) not null,
+        first_name varchar(100),
+        is_enabled boolean not null,
+        last_login timestamp(6),
+        last_name varchar(100),
+        password varchar(100) not null,
+        password_reset_token varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:23:19.287087+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKfuqka493llh9k0imxq2nqkby"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKfuqka493llh9k0imxq2nqkby [42001-224]
+2024-08-31 12:23:19.287087+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id) [42001-224]
+2024-08-31 12:23:19.287087+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe [42001-224]
+2024-08-31 12:23:19.288087+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email) [42001-224]
+2024-08-31 12:23:19.289089+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:23:19.298090+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:23:19.299092+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:39:57.329675+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        id bigint not null,\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        created_at timestamp(6),\000d\000a        created_by varchar(255),\000d\000a        machine_ip varchar(20),\000d\000a        machine_name varchar(100),\000d\000a        public_id varchar(255) not null,\000d\000a        state_id integer default 0,\000d\000a        updated_at timestamp(6),\000d\000a        updated_by varchar(255),\000d\000a        version smallint not null,\000d\000a        email varchar(100) not null,\000d\000a        first_name varchar(100),\000d\000a        is_enabled boolean not null,\000d\000a        last_login timestamp(6),\000d\000a        last_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        password_reset_token varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        id bigint not null,
+        action_id integer default 0,
+        active boolean not null,
+        created_at timestamp(6),
+        created_by varchar(255),
+        machine_ip varchar(20),
+        machine_name varchar(100),
+        public_id varchar(255) not null,
+        state_id integer default 0,
+        updated_at timestamp(6),
+        updated_by varchar(255),
+        version smallint not null,
+        email varchar(100) not null,
+        first_name varchar(100),
+        is_enabled boolean not null,
+        last_login timestamp(6),
+        last_name varchar(100),
+        password varchar(100) not null,
+        password_reset_token varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:39:57.334672+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKfuqka493llh9k0imxq2nqkby"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKfuqka493llh9k0imxq2nqkby [42001-224]
+2024-08-31 12:39:57.334672+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id) [42001-224]
+2024-08-31 12:39:57.335672+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe [42001-224]
+2024-08-31 12:39:57.335672+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email) [42001-224]
+2024-08-31 12:39:57.337673+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:39:57.345676+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:39:57.346678+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:47:38.724578+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        id bigint not null,\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        created_at timestamp(6),\000d\000a        created_by varchar(255),\000d\000a        machine_ip varchar(20),\000d\000a        machine_name varchar(100),\000d\000a        public_id varchar(255) not null,\000d\000a        state_id integer default 0,\000d\000a        updated_at timestamp(6),\000d\000a        updated_by varchar(255),\000d\000a        version smallint not null,\000d\000a        email varchar(100) not null,\000d\000a        first_name varchar(100),\000d\000a        is_enabled boolean not null,\000d\000a        last_login timestamp(6),\000d\000a        last_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        password_reset_token varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        id bigint not null,
+        action_id integer default 0,
+        active boolean not null,
+        created_at timestamp(6),
+        created_by varchar(255),
+        machine_ip varchar(20),
+        machine_name varchar(100),
+        public_id varchar(255) not null,
+        state_id integer default 0,
+        updated_at timestamp(6),
+        updated_by varchar(255),
+        version smallint not null,
+        email varchar(100) not null,
+        first_name varchar(100),
+        is_enabled boolean not null,
+        last_login timestamp(6),
+        last_name varchar(100),
+        password varchar(100) not null,
+        password_reset_token varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:47:38.740204+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKfuqka493llh9k0imxq2nqkby"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKfuqka493llh9k0imxq2nqkby [42001-224]
+2024-08-31 12:47:38.740204+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKfuqka493llh9k0imxq2nqkby unique (public_id) [42001-224]
+2024-08-31 12:47:38.740204+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       drop constraint if exists UKob8kqyqqgmefl0aco34akdtpe [42001-224]
+2024-08-31 12:47:38.740204+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists [*]user \000d\000a       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email)"; expected "identifier"; SQL statement:
+
+    alter table if exists user 
+       add constraint UKob8kqyqqgmefl0aco34akdtpe unique (email) [42001-224]
+2024-08-31 12:47:38.740204+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:47:38.740204+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:47:38.740204+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:49:34.536885+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 12:49:34.568138+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        is_enabled boolean not null,\000d\000a        state_id integer default 0,\000d\000a        version smallint not null,\000d\000a        created_at timestamp(6),\000d\000a        id bigint not null,\000d\000a        last_login timestamp(6),\000d\000a        updated_at timestamp(6),\000d\000a        machine_ip varchar(20),\000d\000a        email varchar(100) not null unique,\000d\000a        first_name varchar(100),\000d\000a        last_name varchar(100),\000d\000a        machine_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        created_by varchar(255),\000d\000a        password_reset_token varchar(255),\000d\000a        public_id varchar(255) not null unique,\000d\000a        updated_by varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        action_id integer default 0,
+        active boolean not null,
+        is_enabled boolean not null,
+        state_id integer default 0,
+        version smallint not null,
+        created_at timestamp(6),
+        id bigint not null,
+        last_login timestamp(6),
+        updated_at timestamp(6),
+        machine_ip varchar(20),
+        email varchar(100) not null unique,
+        first_name varchar(100),
+        last_name varchar(100),
+        machine_name varchar(100),
+        password varchar(100) not null,
+        created_by varchar(255),
+        password_reset_token varchar(255),
+        public_id varchar(255) not null unique,
+        updated_by varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:49:34.568138+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:49:34.583757+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:49:34.583757+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:49:35.520739+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 12:52:32.104509+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 12:52:32.143510+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        is_enabled boolean not null,\000d\000a        state_id integer default 0,\000d\000a        version smallint not null,\000d\000a        created_at timestamp(6),\000d\000a        id bigint not null,\000d\000a        last_login timestamp(6),\000d\000a        updated_at timestamp(6),\000d\000a        machine_ip varchar(20),\000d\000a        email varchar(100) not null unique,\000d\000a        first_name varchar(100),\000d\000a        last_name varchar(100),\000d\000a        machine_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        created_by varchar(255),\000d\000a        password_reset_token varchar(255),\000d\000a        public_id varchar(255) not null unique,\000d\000a        updated_by varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        action_id integer default 0,
+        active boolean not null,
+        is_enabled boolean not null,
+        state_id integer default 0,
+        version smallint not null,
+        created_at timestamp(6),
+        id bigint not null,
+        last_login timestamp(6),
+        updated_at timestamp(6),
+        machine_ip varchar(20),
+        email varchar(100) not null unique,
+        first_name varchar(100),
+        last_name varchar(100),
+        machine_name varchar(100),
+        password varchar(100) not null,
+        created_by varchar(255),
+        password_reset_token varchar(255),
+        public_id varchar(255) not null unique,
+        updated_by varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:52:32.147512+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:52:32.162508+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:52:32.163515+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:55:38.651039+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 12:55:50.548366+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 12:55:50.587358+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        is_enabled boolean not null,\000d\000a        state_id integer default 0,\000d\000a        version smallint not null,\000d\000a        created_at timestamp(6),\000d\000a        id bigint not null,\000d\000a        last_login timestamp(6),\000d\000a        updated_at timestamp(6),\000d\000a        machine_ip varchar(20),\000d\000a        email varchar(100) not null unique,\000d\000a        first_name varchar(100),\000d\000a        last_name varchar(100),\000d\000a        machine_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        created_by varchar(255),\000d\000a        password_reset_token varchar(255),\000d\000a        public_id varchar(255) not null unique,\000d\000a        updated_by varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        action_id integer default 0,
+        active boolean not null,
+        is_enabled boolean not null,
+        state_id integer default 0,
+        version smallint not null,
+        created_at timestamp(6),
+        id bigint not null,
+        last_login timestamp(6),
+        updated_at timestamp(6),
+        machine_ip varchar(20),
+        email varchar(100) not null unique,
+        first_name varchar(100),
+        last_name varchar(100),
+        machine_name varchar(100),
+        password varchar(100) not null,
+        created_by varchar(255),
+        password_reset_token varchar(255),
+        public_id varchar(255) not null unique,
+        updated_by varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 12:55:50.592359+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:55:50.606362+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 12:55:50.607367+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 13:09:44.659094+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 13:09:56.916909+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 13:09:56.955919+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        is_enabled boolean not null,\000d\000a        state_id integer default 0,\000d\000a        version smallint not null,\000d\000a        created_at timestamp(6),\000d\000a        id bigint not null,\000d\000a        last_login timestamp(6),\000d\000a        updated_at timestamp(6),\000d\000a        machine_ip varchar(20),\000d\000a        email varchar(100) not null unique,\000d\000a        first_name varchar(100),\000d\000a        last_name varchar(100),\000d\000a        machine_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        created_by varchar(255),\000d\000a        password_reset_token varchar(255),\000d\000a        public_id varchar(255) not null unique,\000d\000a        updated_by varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        action_id integer default 0,
+        active boolean not null,
+        is_enabled boolean not null,
+        state_id integer default 0,
+        version smallint not null,
+        created_at timestamp(6),
+        id bigint not null,
+        last_login timestamp(6),
+        updated_at timestamp(6),
+        machine_ip varchar(20),
+        email varchar(100) not null unique,
+        first_name varchar(100),
+        last_name varchar(100),
+        machine_name varchar(100),
+        password varchar(100) not null,
+        created_by varchar(255),
+        password_reset_token varchar(255),
+        public_id varchar(255) not null unique,
+        updated_by varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 13:09:56.960915+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 13:09:56.975919+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 13:09:56.976920+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 13:15:33.289221+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 13:16:01.013321+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 13:16:01.053326+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table [*]user (\000d\000a        action_id integer default 0,\000d\000a        active boolean not null,\000d\000a        is_enabled boolean not null,\000d\000a        state_id integer default 0,\000d\000a        version smallint not null,\000d\000a        created_at timestamp(6),\000d\000a        id bigint not null,\000d\000a        last_login timestamp(6),\000d\000a        updated_at timestamp(6),\000d\000a        machine_ip varchar(20),\000d\000a        email varchar(100) not null unique,\000d\000a        first_name varchar(100),\000d\000a        last_name varchar(100),\000d\000a        machine_name varchar(100),\000d\000a        password varchar(100) not null,\000d\000a        created_by varchar(255),\000d\000a        password_reset_token varchar(255),\000d\000a        public_id varchar(255) not null unique,\000d\000a        updated_by varchar(255),\000d\000a        verification_token varchar(255),\000d\000a        primary key (id)\000d\000a    )"; expected "identifier"; SQL statement:
+
+    create table user (
+        action_id integer default 0,
+        active boolean not null,
+        is_enabled boolean not null,
+        state_id integer default 0,
+        version smallint not null,
+        created_at timestamp(6),
+        id bigint not null,
+        last_login timestamp(6),
+        updated_at timestamp(6),
+        machine_ip varchar(20),
+        email varchar(100) not null unique,
+        first_name varchar(100),
+        last_name varchar(100),
+        machine_name varchar(100),
+        password varchar(100) not null,
+        created_by varchar(255),
+        password_reset_token varchar(255),
+        public_id varchar(255) not null unique,
+        updated_by varchar(255),
+        verification_token varchar(255),
+        primary key (id)
+    ) [42001-224]
+2024-08-31 13:16:01.057322+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists password_reset_token \000d\000a       add constraint FK5lwtbncug84d4ero33v3cfxvl \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists password_reset_token 
+       add constraint FK5lwtbncug84d4ero33v3cfxvl 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 13:16:01.073324+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists user_role \000d\000a       add constraint FK859n2jvi8ivhui0rl0esws6o \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists user_role 
+       add constraint FK859n2jvi8ivhui0rl0esws6o 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 13:16:01.074325+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    alter table if exists verification_tokens \000d\000a       add constraint FKnoled469hi2uuqjqfsegbuxp5 \000d\000a       foreign key (user_id) \000d\000a       references [*]user"; expected "identifier"; SQL statement:
+
+    alter table if exists verification_tokens 
+       add constraint FKnoled469hi2uuqjqfsegbuxp5 
+       foreign key (user_id) 
+       references user [42001-224]
+2024-08-31 13:17:45.652099+06:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    drop table if exists [*]user cascade "; expected "identifier"; SQL statement:
+
+    drop table if exists user cascade  [42001-224]
+2024-08-31 14:37:48.393159+06:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete[*]* FROM USERS"; expected "identifier"; SQL statement:
+delete* FROM USERS [42001-224]
+2024-08-31 14:37:55.142359+06:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete [*]* FROM USERS"; expected "identifier"; SQL statement:
+delete * FROM USERS [42001-224]
+2024-08-31 14:38:11.212303+06:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM USERS \000d\000aWHREE 1"; expected "identifier"; SQL statement:
+DELETE * FROM USERS 
+WHREE 1 [42001-224]
+2024-08-31 14:38:16.470046+06:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM USERS \000d\000aWHREE 1"; expected "identifier"; SQL statement:
+DELETE * FROM USERS 
+WHREE 1 [42001-224]
+2024-08-31 14:38:31.982444+06:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM USERS \000d\000aWHREE 1==1"; expected "identifier"; SQL statement:
+DELETE * FROM USERS 
+WHREE 1==1 [42001-224]
+2024-08-31 14:38:35.581341+06:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM USERS \000d\000aWHREE 1=1"; expected "identifier"; SQL statement:
+DELETE * FROM USERS 
+WHREE 1=1 [42001-224]

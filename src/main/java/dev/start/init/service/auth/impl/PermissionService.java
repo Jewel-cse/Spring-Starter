@@ -1,4 +1,4 @@
-package dev.start.init.service.auth;
+package dev.start.init.service.auth.impl;
 
 import dev.start.init.dto.auth.PermissionDto;
 import dev.start.init.entity.auth.Permission;
@@ -13,10 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class PermissionService {
 
-    @Autowired
     private PermissionRepository permissionRepository;
-
-    @Autowired
     private PermissionMapper permissionMapper;
 
     public List<PermissionDto> findAllPermissions() {

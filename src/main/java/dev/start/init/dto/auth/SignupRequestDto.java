@@ -28,6 +28,7 @@ public class SignupRequestDto {
 
     @NotBlank(message = "Password is required")
     @Size(max = 100, message = "Password must be less than or equal to 100 characters")
+
     private String password;
 
 

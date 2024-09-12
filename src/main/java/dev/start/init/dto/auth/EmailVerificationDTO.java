@@ -1,4 +1,14 @@
 package dev.start.init.dto.auth;
 
-public class EmailVerificationDto {
+
+import lombok.Data;
+
+import jakarta.validation.constraints.NotBlank;
+
+@Data
+public class EmailVerificationDTO {
+
+    @NotBlank(message = "Token is mandatory")
+    private String token;
 }
+

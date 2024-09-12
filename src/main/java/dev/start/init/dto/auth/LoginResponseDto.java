@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
  * @since 1.0
  */
 @Data
+@AllArgsConstructor
 public class LoginResponseDto {
     private String token;
     private String refreshToken;

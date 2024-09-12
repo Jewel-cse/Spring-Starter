@@ -1,4 +1,4 @@
-package dev.start.init.entity.auth;
+package dev.start.init.dto.auth;
 
 import lombok.Data;
 import java.io.Serializable;
