@@ -15,8 +15,8 @@ import java.time.LocalDate;
  * @since 1.0
  */
 @Data
-@EqualsAndHashCode()
-public class CompanyDto {
+@EqualsAndHashCode(callSuper = false)
+public class CompanyDto extends BaseDto {
 
     private String publicId;
 

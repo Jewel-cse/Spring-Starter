@@ -2,10 +2,7 @@ package dev.start.init;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableScheduling
@@ -18,7 +15,7 @@ public class InitApplication {
 	//http://localhost:5173 to 8080
 	//Cross origin request (COR) not allow by default
 	//Allow all request only from http://localhost:3000
-	@Bean
+	/*@Bean
 	public WebMvcConfigurer corsConfigurer(){
 		return new WebMvcConfigurer(){
 			@Override
@@ -31,6 +28,6 @@ public class InitApplication {
 			}
 
 		};
-	}
+	}*/
 
 }

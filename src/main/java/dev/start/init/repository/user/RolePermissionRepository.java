@@ -1,31 +1,21 @@
 package dev.start.init.repository.user;
 
-import dev.start.init.entity.user.Permission;
+import dev.start.init.entity.user.RolePermission;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
-import java.util.Optional;
-
-/**
- * Repository interface for the Permission entity.
- */
 @Repository
-public interface PermissionRepository extends JpaRepository<Permission, Long> {
+public interface RolePermissionRepository extends JpaRepository<RolePermission, Long> {
+    List<RolePermission> findByRoleId(Long roleId);
+    List<RolePermission> findByRoleIdAndIsActive(Long roleId, Integer isActive);
+    RolePermission findByRoleIdAndModuleIdAndDocumentId(Long roleId, String moduleId, String documentId);
 
-    /**
-     * Find a permission by name.
-     *
-     * @param name the name of the permission
-     * @return an Optional containing the Permission, if found
-     */
-    Optional<Permission> findByName(String name);
-
-    /**
-     * Check if a permission exists by name.
-     *
-     * @param name the name to check
-     * @return true if the permission exists, false otherwise
-     */
-    boolean existsByName(String name);
+    @Query("SELECT rp FROM RolePermission rp WHERE rp.roleId IN " +
+            "(SELECT r.id FROM User u JOIN u.userRoles r WHERE u.publicId = :publicId) AND rp.isActive = :isActive")
+    List<RolePermission> findByUserIdAndIsActive(@Param("publicId") String publicId, @Param("isActive") int isActive);
 }
+
 

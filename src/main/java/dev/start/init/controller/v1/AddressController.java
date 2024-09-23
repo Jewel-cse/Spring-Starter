@@ -66,7 +66,7 @@ public class AddressController {
     public ResponseEntity<AddressDto> createAddress(
             @RequestParam(value = "addressData", required = false) String addressData,
             @RequestParam(value = "addressFile", required = false) MultipartFile addressFile) {
-        log.info("Creating new Address: {}", addressData);
+        LOG.info("Creating new Address: {}", addressData);
 
         try {
             // Convert the JSON string to AddressDto object
@@ -76,11 +76,11 @@ public class AddressController {
             // Call the service method to create the address
             AddressDto createdAddress = addressService.createAddress(addressDto, addressFile);
 
-            log.info("Created Address: {}", createdAddress);
+            LOG.info("Created Address: {}", createdAddress);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
 
         } catch (JsonProcessingException e) {
-            log.error("Error processing JSON for AddressDto", e);
+            LOG.error("Error processing JSON for AddressDto", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
@@ -105,11 +105,11 @@ public class AddressController {
             // Call the service method to create the address
             AddressDto updatedAddress = addressService.updateAddress(id, addressDto,addressFile);
 
-            log.info("Updating Address with id {}: {}", id, addressData);
+            LOG.info("Updating Address with id {}: {}", id, addressData);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedAddress);
 
         } catch (JsonProcessingException e) {
-            log.error("Error processing JSON for AddressDto", e);
+            LOG.error("Error processing JSON for AddressDto", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
@@ -122,9 +122,9 @@ public class AddressController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAddress(@PathVariable Long id) {
-        log.info("Deleting Address with id {}", id);
+        LOG.info("Deleting Address with id {}", id);
         addressService.deleteAddress(id);
-        log.info("Deleted Address with id {}", id);
+        LOG.info("Deleted Address with id {}", id);
         return ResponseEntity.noContent().build();
     }
 
@@ -136,9 +136,9 @@ public class AddressController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AddressDto> getAddressById(@PathVariable Long id) {
-        log.info("Fetching Address with id {}", id);
+        LOG.info("Fetching Address with id {}", id);
         AddressDto addressDto = addressService.getAddressById(id);
-        log.info("Fetched Address: {}", addressDto);
+        LOG.info("Fetched Address: {}", addressDto);
         return ResponseEntity.ok(addressDto);
     }
 
@@ -195,7 +195,7 @@ public class AddressController {
         try {
             Path path = Paths.get(addressImageBasePath).resolve(filename).normalize();
             if (!Files.exists(path) || !Files.isReadable(path)) {
-                log.warn("File not found or not readable: {}", filename);
+                LOG.warn("File not found or not readable: {}", filename);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
@@ -206,14 +206,14 @@ public class AddressController {
                 contentType = "application/octet-stream";
             }
 
-            log.info("Serving file: {}", filename);
+            LOG.info("Serving file: {}", filename);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + path.getFileName().toString() + "\"")
                     .contentLength(resource.contentLength())
                     .body(resource);
         } catch (IOException e) {
-            log.error("Error occurred while serving file: {}", filename, e);
+            LOG.error("Error occurred while serving file: {}", filename, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

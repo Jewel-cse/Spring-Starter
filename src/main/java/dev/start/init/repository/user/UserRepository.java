@@ -1,51 +1,105 @@
-package dev.start.init.repository.auth;
-
+package dev.start.init.repository.user;
 
 import dev.start.init.entity.user.User;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import lombok.NonNull;
+import org.springframework.data.jpa.datatables.repository.DataTablesRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 /**
- * Repository interface for the User entity.
+ * Repository for the User.
+ *
+ * @author Md Jewel
+ * @version 1.0
+ * @since 1.0
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+@RepositoryRestResource(exported = false)
+public interface UserRepository
+        extends DataTablesRepository<User, Long>, JpaRepository<User, Long> {
+
+    @NonNull
+    @Override
+    @RestResource(exported = false)
+    Optional<User> findById(@NonNull Long id);
 
     /**
-     * Find a user by username.
+     * Find user by email.
      *
-     * @param username the username of the user
-     * @return an Optional containing the User, if found
+     * @param email email used to search for user.
+     * @return User found.
      */
-    //Optional<User> findByUsername(String username);
+    User findByEmail(String email);
 
     /**
-     * Find a user by email.
+     * Find user by username.
      *
-     * @param email the email of the user
-     * @return an Optional containing the User, if found
+     * @param username username used to search for user.
+     * @return User found.
      */
-    Optional<User> findByEmail(String email);
+//  @EntityGraph(
+//      type = EntityGraphType.FETCH,
+//      attributePaths = {"userRoles"})
+    User findByUsername(String username);
 
     /**
-     * Check if a user exists by username.
+     * Check if user exists by username.
      *
-     * @param username the username to check
-     * @return true if the user exists, false otherwise
+     * @param username username to check if user exists.
+     * @return True if user exists or false otherwise.
      */
-    //boolean existsByUsername(String username);
+    Boolean existsByUsernameOrderById(String username);
 
     /**
-     * Check if a user exists by email.
+     * Check if user exists by username or email.
      *
-     * @param email the email to check
-     * @return true if the user exists, false otherwise
+     * @param username username to check if user exists.
+     * @param email email to check if user exists.
+     * @return True if user exists or false otherwise.
      */
-    boolean existsByEmail(String email);
+    @RestResource(exported = false)
+    Boolean existsByUsernameAndEnabledTrueOrEmailAndEnabledTrueOrderById(
+            String username, String email);
 
-    Optional<User> findByVerificationToken(String verificationToken);
-    Optional<User> findByPasswordResetToken(String token);
+    /**
+     * Check if user exists by username and verificationToken.
+     *
+     * @param username the username
+     * @param verificationToken the verification token
+     * @return if user exists with the given verification token
+     */
+    Boolean existsByUsernameAndVerificationTokenOrderById(String username, String verificationToken);
+
+    Boolean existsByUsernameAndFailedLoginAttemptsGreaterThanOrderById(String username, int attempts);
+
+    /**
+     * Find user by public id.
+     *
+     * @param publicId publicId used to search for user.
+     * @return User found.
+     */
+    User findByPublicId(String publicId);
+
+    /**
+     * Find all users that failed to verify their email after a certain time.
+     *
+     * @param allowedDaysToVerify email verification allowed days.
+     * @return List of users that failed to verify their email.
+     */
+    @RestResource(exported = false)
+    List<User> findByEnabledFalseAndCreatedAtBefore(LocalDateTime allowedDaysToVerify);
+
+    /**
+     * Delete the user associated with the given public id.
+     *
+     * @param publicId public id of the user to delete.
+     * @return Number of rows deleted.
+     */
+    @RestResource(exported = false)
+    int deleteByPublicId(String publicId);
 }
-

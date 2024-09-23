@@ -1,105 +1,168 @@
-package dev.start.init.entity.auth;
+package dev.start.init.entity.user;
 
 import dev.start.init.constants.SequenceConstants;
+import dev.start.init.constants.user.UserConstants;
 import dev.start.init.entity.base.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.SequenceGenerator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
-@NoArgsConstructor
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
+/**
+ * The user model for the application.
+ *
+ * @author Md Jewel
+ * @version 1.0
+ * @since 1.0
+ */
 @Entity
-@Table(name = "USERS")
-public class User extends BaseEntity<Long> implements Serializable, UserDetails {
+@Data
+//@Audited
+@Table(name = "users")
+public class User extends BaseEntity<Long> implements Serializable {
+    @Serial private static final long serialVersionUID = 7538542321562810251L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SequenceConstants.USER_SEQUENCE)
-    @SequenceGenerator(name = SequenceConstants.USER_SEQUENCE,
-            sequenceName = "UserSequence",
-            initialValue = SequenceConstants.USER_SEQUENCE_INITIAL_VALUE,
-            allocationSize = SequenceConstants.USER_SEQUENCE_ALLOCATION)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,  generator = SequenceConstants.USER_SEQUENCE)
+    @SequenceGenerator(name = SequenceConstants.USER_SEQUENCE,  initialValue = SequenceConstants.USER_SEQUENCE_INITIAL_VALUE, allocationSize = SequenceConstants.USER_SEQUENCE_ALLOCATION)
     private Long id;
 
-    @Size(max = 100)
-    @NotBlank(message = "Password is required")
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = UserConstants.BLANK_USERNAME)
+    @Size(min = 3, max = 50, message = UserConstants.USERNAME_SIZE)
+    private String username;
 
-    @Size(max = 100)
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
-    @Column(name = "EMAIL", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = UserConstants.BLANK_EMAIL)
+    @Email(message = UserConstants.INVALID_EMAIL)
     private String email;
 
-    @Size(max = 100)
-    @Column(name = "FIRST_NAME")
+    @JsonIgnore
+    @ToString.Exclude
+    @NotBlank(message = UserConstants.BLANK_PASSWORD)
+    private String password;
+
     private String firstName;
-
-    @Size(max = 100)
-    @Column(name = "LAST_NAME")
+    private String middleName;
     private String lastName;
-
-    @Column(name = "VERIFICATION_TOKEN")
+    private String phone;
+    private String profileImage;
     private String verificationToken;
 
-    @Column(name = "PASSWORD_RESET_TOKEN")
-    private String passwordResetToken;
+    private int failedLoginAttempts;
+    private LocalDateTime lastSuccessfulLogin;
 
-    @Column(nullable = false)
-    private boolean isEnabled = false;
+    private boolean enabled;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "USER_ROLE",
-            joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ROLE_ID")
-    )
-    private Set<Role> roles=null;
+    @NotAudited
+    @ManyToMany(fetch = FetchType.LAZY )
+    @JoinTable(name = "role_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonIgnore
+    @ToString.Exclude
+    private Set<Role> userRoles = new HashSet<>();
 
-    @Column(name = "LAST_LOGIN")
-    private LocalDateTime lastLogin;
+//  @NotAudited
+//  @ToString.Exclude
+//  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//  private Set<UserRole> userRoles = new HashSet<>();
+
+//  @NotAudited
+//  @ToString.Exclude
+//  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private Set<UserHistory> userHistories = new HashSet<>();
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.toString()));
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User user) || !super.equals(o)) {
+            return false;
+        }
+        return Objects.equals(getPublicId(), user.getPublicId())
+                && Objects.equals(getUsername(), user.getUsername())
+                && Objects.equals(getEmail(), user.getEmail());
     }
 
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getPublicId(), getUsername(), getEmail());
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+    /**
+     * Add userRole to this User.
+     *
+     * @param role the role
+
+    public void addUserRole(final Role role) {
+    var userRole = new UserRole(this, role);
+    userRoles.add(userRole);
+    userRole.setUser(this);
+    }
+     */
+    /**
+     * Remove userRole from this User.
+     *
+     * @param role the role
+
+    public void removeUserRole(final Role role) {
+    var userRole = new UserRole(this, role);
+    userRoles.remove(userRole);
+    userRole.setUser(null);
     }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
+     */
 
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+    /**
+     * Add a UserHistory to this user.
+     *
+     * @param userHistory userHistory to be added.
+     */
+//  public void addUserHistory(final UserHistory userHistory) {
+//    userHistories.add(userHistory);
+//    userHistory.setUser(this);
+//  }
+
+    /**
+     * Formulates the full name of the user.
+     *
+     * @return the full name of the user
+     */
+    public String getName() {
+        return StringUtils.joinWith(StringUtils.SPACE, getFirstName(), getMiddleName(), getLastName());
     }
 }
 

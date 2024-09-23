@@ -1,4 +1,4 @@
-package dev.start.init.dto.mapper;
+package dev.start.init.mapper;
 
 import dev.start.init.dto.CompanyDto;
 import dev.start.init.entity.Company;

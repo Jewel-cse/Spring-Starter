@@ -1,9 +1,8 @@
-package dev.start.init.dto.mapper;
+package dev.start.init.mapper;
 
 import dev.start.init.dto.AddressDto;
 import dev.start.init.entity.Address;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
@@ -26,8 +25,6 @@ public interface AddressMapper {
      * @param dto The AddressDto to be converted.
      * @return The Address entity.
      */
-    @Mapping(source = "filePath", target = "filePath")
-    @Mapping(source = "fileType", target = "fileType")
     Address toEntity(AddressDto dto);
 
     /**
@@ -35,8 +32,6 @@ public interface AddressMapper {
      * @param entity The Address entity to be converted.
      * @return The AddressDto.
      */
-    @Mapping(source = "filePath", target = "filePath")
-    @Mapping(source = "fileType", target = "fileType")
     AddressDto toDto(Address entity);
 
     /**

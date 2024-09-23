@@ -1,8 +1,9 @@
 package dev.start.init.service.mail.impl;
 
+import dev.start.init.dto.user.UserDto;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import dev.start.init.entity.auth.User;
+import dev.start.init.entity.user.User;
 import dev.start.init.service.mail.EmailService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
@@ -16,9 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.sql.Time;
 import java.time.Year;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,14 +47,14 @@ public class EmailServiceImpl implements EmailService {
     private String appUrl;
 
     @Override
-    public void sendVerificationEmail(User user) throws IOException, TemplateException, MessagingException {
+    public void sendVerificationEmail(UserDto user,String token) throws IOException, TemplateException, MessagingException {
         // Create a new MimeMessage and MimeMessageHelper for each email
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        String verificationUrl = appUrl + "/api/v1/auth/verify-email?token=" + user.getVerificationToken();
+        String verificationUrl = appUrl + "/api/v1/users/verify?token="+token;
         Map<String, Object> model = new HashMap<>();
-        model.put("userName", user.getLastName());
+        model.put("userName", user.getUsername());
         model.put("verificationLink", verificationUrl);
         model.put("year",Year.now().getValue());
 
@@ -69,12 +68,12 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendPasswordResetEmail(User user) throws IOException, TemplateException, MessagingException {
+    public void sendPasswordResetEmail(UserDto user) throws IOException, TemplateException, MessagingException {
         // Create a new MimeMessage and MimeMessageHelper for each email
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        String resetPasswordUrl = appUrl + "/api/v1/auth/reset-password?token=" + user.getPasswordResetToken();
+        String resetPasswordUrl = appUrl + "/api/v1/user/reset-password?token=" + user.getVerificationToken();
 
         Map<String, Object> model = new HashMap<>();
         model.put("userName", user.getLastName());

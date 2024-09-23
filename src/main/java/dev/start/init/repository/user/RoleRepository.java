@@ -1,31 +1,35 @@
-package dev.start.init.repository.auth;
+package dev.start.init.repository.user;
 
 import dev.start.init.entity.user.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 /**
- * Repository interface for the Role entity.
+ * Repository for the role.
+ *
+ * @author Md Jewel
+ * @version 1.0
+ * @since 1.0
  */
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+//@RepositoryRestResource(exported = false)
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     /**
-     * Find a role by name.
+     * Merges an existing role with the role instance given.
      *
-     * @param name the name of the role
-     * @return an Optional containing the Role, if found
+     * @param role the role
+     * @return the persisted role with assigned id
      */
-    Optional<Role> findByName(String name);
+    //Role merge(Role role);
 
     /**
-     * Check if a role exists by name.
+     * Gets role associated with required name.
      *
-     * @param name the name to check
-     * @return true if the role exists, false otherwise
+     * @param name name of role.
+     * @return Role found.
      */
-    boolean existsByName(String name);
+    Role findByName(String name);
 }
+
 

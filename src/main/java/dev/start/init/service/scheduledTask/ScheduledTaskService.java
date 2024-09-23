@@ -51,6 +51,8 @@ public class ScheduledTaskService {
      * Used <b>Async</b> to running them asynchronously to prevent blocking when multiple task is running
      * long time running process
      */
+
+    /*
     @Scheduled(fixedRate = 30000)
     @Async
     public void executeTaskWithFixedRate() {
@@ -61,6 +63,7 @@ public class ScheduledTaskService {
             logger.error("Error occurred during scheduled task execution", e);
         }
     }
+    */
 
     /**
      * This is scheduled task each night 11:20

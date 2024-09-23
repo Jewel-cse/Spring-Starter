@@ -37,12 +37,12 @@ public class MethodLogger {
         final String format = "=> Starting -  {} args: {}";
 
         switch (level) {
-            case "warn" -> log.warn(format, method, args);
-            case "error" -> log.error(format, method, args);
-            case "debug" -> log.debug(format, method, args);
-            case "trace" -> log.trace(format, method, args);
+            case "warn" -> LOG.warn(format, method, args);
+            case "error" -> LOG.error(format, method, args);
+            case "debug" -> LOG.debug(format, method, args);
+            case "trace" -> LOG.trace(format, method, args);
             case "critical" -> customLog.critical(format, method, args);
-            default -> log.info(format, method, args);
+            default -> LOG.info(format, method, args);
         }
     }
 
@@ -50,12 +50,12 @@ public class MethodLogger {
         final String format = "<= {} : {} - Finished, duration: {} ms";
 
         switch (level) {
-            case "warn" -> log.warn(format, method, response, System.currentTimeMillis() - start);
-            case "error" -> log.error(format, method, response, System.currentTimeMillis() - start);
-            case "debug" -> log.debug(format, method, response, System.currentTimeMillis() - start);
-            case "trace" -> log.trace(format, method, response, System.currentTimeMillis() - start);
+            case "warn" -> LOG.warn(format, method, response, System.currentTimeMillis() - start);
+            case "error" -> LOG.error(format, method, response, System.currentTimeMillis() - start);
+            case "debug" -> LOG.debug(format, method, response, System.currentTimeMillis() - start);
+            case "trace" -> LOG.trace(format, method, response, System.currentTimeMillis() - start);
             case "critical" -> customLog.critical(format, method, response, System.currentTimeMillis() - start);
-            default -> log.info(format, method, response, System.currentTimeMillis() - start);
+            default -> LOG.info(format, method, response, System.currentTimeMillis() - start);
         }
     }
 }
