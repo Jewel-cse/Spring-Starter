@@ -12,7 +12,9 @@ package dev.start.init.constants;
 public final class EmployeeConstants {
 
     // Prevent instantiation
-    private EmployeeConstants() {}
+    private EmployeeConstants() {
+        new AssertionError(ErrorConstants.NOT_INSTANTIABLE);
+    }
 
     // Validation Messages
     public static final String BLANK_EMP_CODE = "Employee code must not be blank.";

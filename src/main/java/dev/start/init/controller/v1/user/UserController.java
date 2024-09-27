@@ -44,7 +44,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 /**
@@ -120,7 +119,6 @@ public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
-    private final EmailService emailService;
     private final EncryptionService encryptionService;
 
 

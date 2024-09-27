@@ -1,5 +1,10 @@
 package dev.start.init.dto;
 
+import dev.start.init.constants.CompanyConstants;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,13 +23,19 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = false)
 public class CompanyDto extends BaseDto {
 
+    private Integer id;
     private String publicId;
 
-    private String comName;
-
+    @NotBlank
+    @Size(min = 3,max = 100,message = CompanyConstants.COMPANY_CODE)
     private String comCode;
 
-    private LocalDate comEstablished;
+    @NotBlank
+    @Size(max = 100,message = CompanyConstants.COMPANY_NAME)
+    private String comName;
 
+    @NotNull
+    @Past(message = CompanyConstants.COMPANY_ESTABLISH_DATE)
+    private LocalDate comEstablished;
 }
 

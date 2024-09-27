@@ -20,6 +20,7 @@ import dev.start.init.web.payload.request.LoginRequest;
 import dev.start.init.web.payload.request.SignUpRequest;
 import dev.start.init.web.payload.response.JwtResponseBuilder;
 import dev.start.init.web.payload.response.LogoutResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -64,7 +65,6 @@ public class AuthController {
 
     @Value("${access-token-expiration-in-minutes}")
     private int accessTokenExpirationInMinutes;
-
     private final JwtService jwtService;
     private final CookieService cookieService;
     private final EncryptionService encryptionService;
@@ -82,7 +82,8 @@ public class AuthController {
      * @param loginRequest the login request
      * @return the jwt token details
      */
-    @SecurityRequirements
+    //@SecurityRequirements
+    @Operation(summary = "Authenticate User", description = "Logs in a user and returns a JWT token.")
     @Loggable(level = "debug")
     @PostMapping(value = SecurityConstants.LOGIN)
     public ResponseEntity<JwtResponseBuilder> authenticateUser(
@@ -113,7 +114,8 @@ public class AuthController {
      * @param request The request
      * @return the jwt token details
      */
-    @SecurityRequirements
+    //@SecurityRequirements
+    @Operation(summary = "Refresh JWT Token", description = "Refreshes the JWT access token using a valid refresh token.")
     @Loggable(level = "error")
     @GetMapping(value = SecurityConstants.REFRESH_TOKEN)
     public ResponseEntity<JwtResponseBuilder> refreshToken(
@@ -145,7 +147,8 @@ public class AuthController {
      * @param response the response
      * @return response entity
      */
-    @SecurityRequirements
+    //@SecurityRequirements
+    @Operation(summary = "Logout User", description = "Logs out the user and clears all associated cookies.")
     @Loggable(level = "warn")
     @DeleteMapping(value = SecurityConstants.LOGOUT)
     public ResponseEntity<LogoutResponse> logout(

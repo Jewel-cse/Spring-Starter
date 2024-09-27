@@ -2,6 +2,7 @@ package dev.start.init.service;
 
 import dev.start.init.annotation.Loggable;
 import dev.start.init.dto.EmployeeDto;
+import dev.start.init.entity.Company;
 import dev.start.init.mapper.EmployeeMapper;
 import dev.start.init.entity.Employee;
 import dev.start.init.repository.EmployeeRepository;
@@ -55,14 +56,14 @@ public class EmployeeService {
      * @return the created table
      */
 
-    //@PostConstruct
+/*    //@PostConstruct
     @Loggable(level = "trace")
     public void initEmployeeTable(){
         List<Employee>  employees= IntStream.rangeClosed(1,50)
                 .mapToObj(i->new Employee("empCode_"+i,"empName_"+i,"empDesig_"+i,new BigDecimal(Math.random()*100000),true,LocalDate.now().minusDays(i)))
                 .collect(Collectors.toList());
         employeeRepository.saveAll(employees);
-    }
+    }*/
 
 
     /**

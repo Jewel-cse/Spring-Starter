@@ -28,6 +28,13 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <jjwt.version>0.12.5</jjwt.version>
+        <springDoc.version>2.4.0</springDoc.version>
+        <javadocScribe.version>0.15.0</javadocScribe.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <jacoco.version>0.8.11</jacoco.version>
     </properties>
     <dependencies>
         <dependency>
@@ -141,7 +148,12 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.2.0</version>
+            <version>${springDoc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-common</artifactId>
+            <version>${springDoc.version}</version>
         </dependency>
 
         <dependency>
@@ -164,7 +176,6 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -197,9 +208,14 @@
             <artifactId>jsoup</artifactId>
             <version>1.17.2</version>
         </dependency>
-
-
+        <!--Report generation -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>7.0.0</version>
+        </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
