@@ -66,7 +66,7 @@ public class CustomResponseAdvice implements ResponseBodyAdvice<Object> {
                 }
 
                 // Check for binary responses
-                if (body instanceof byte[] || body instanceof ByteArrayResource || body instanceof InputStreamResource) {
+                if (body instanceof byte[] || body instanceof ByteArrayResource || body instanceof InputStreamResource || body instanceof org.springframework.core.io.Resource) {
                     // If it's a byte array, we can just return it
                     return body;
                 }

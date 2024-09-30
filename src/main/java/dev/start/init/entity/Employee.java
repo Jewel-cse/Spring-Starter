@@ -42,17 +42,6 @@ public class Employee extends BaseEntity<Long>  {
     private LocalDate joiningDate;
 
     @ManyToOne(targetEntity = Company.class,fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JoinColumn(name = "companyId",referencedColumnName = "id")
     private Company company;
-
-    public Employee(String empCode, String empName, String empDesignation, BigDecimal empSalary, boolean empStatus, LocalDate joiningDate, Company company) {
-        this.empCode = empCode;
-        this.empName=empName;
-        this.empDesignation = empDesignation;
-        this.empSalary=empSalary;
-        this.empStatus=empStatus;
-        this.joiningDate=joiningDate;
-        this.company = company;
-    }
-
 }

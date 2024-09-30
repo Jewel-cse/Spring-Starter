@@ -43,6 +43,7 @@ public interface EmployeeMapper {
      * @param dto the EmployeeDto object containing updated values.
      * @param entity the Employee entity to update.
      */
+    @Mapping(target = "company",ignore = true)
     void updateEntityFromDto(EmployeeDto dto, @MappingTarget Employee entity);
 }
 

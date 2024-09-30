@@ -19,6 +19,6 @@ public interface API_V1 {
 
     String ROLE_PERMISSION_URL = BASE_ENDPOINT+"/permissions";
 
-    String Report = BASE_ENDPOINT+"/reports";
+    String IT_CARD = BASE_ENDPOINT+"/id-card";
 }
 

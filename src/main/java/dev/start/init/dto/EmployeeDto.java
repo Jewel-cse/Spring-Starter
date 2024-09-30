@@ -38,7 +38,6 @@ public class EmployeeDto extends BaseDto{
 
     @DecimalMin(value = "0.000", inclusive = true, message = EmployeeConstants.INVALID_SALARY)
     @DecimalMax(value = "999999.999", inclusive = true, message = EmployeeConstants.INVALID_SALARY)
-
     private BigDecimal empSalary;
 
     private boolean empStatus ;
@@ -47,7 +46,7 @@ public class EmployeeDto extends BaseDto{
     @PastOrPresent(message = EmployeeConstants.INVALID_JOINING_DATE)
     private LocalDate joiningDate;
 
-    @NotNull(message = EmployeeConstants.NULL_COMPANY_ID)
+    //@NotNull(message = EmployeeConstants.NULL_COMPANY_ID)
     private CompanyDto company;
 
 }
