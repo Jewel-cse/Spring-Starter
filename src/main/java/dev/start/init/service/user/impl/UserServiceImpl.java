@@ -1,19 +1,18 @@
 package dev.start.init.service.user.impl;
 
-import dev.start.init.annotation.Loggable;
 import dev.start.init.constants.CacheConstants;
-import dev.start.init.constants.user.RoleConstants;
 import dev.start.init.constants.user.UserConstants;
-import dev.start.init.dto.user.RoleDto;
 import dev.start.init.dto.user.UserDto;
-import dev.start.init.entity.user.Role;
 import dev.start.init.entity.user.User;
+import dev.start.init.entity.user.UserHistory;
 import dev.start.init.enums.RoleType;
 import dev.start.init.enums.UserHistoryType;
 import dev.start.init.exception.ResourceNotFoundException;
-import dev.start.init.exception.user.UserAlreadyExistsException;
+import dev.start.init.exception.user.EmailExistsException;
+import dev.start.init.exception.user.UserNotFoundException;
 import dev.start.init.mapper.UserMapper;
 import dev.start.init.repository.user.RoleRepository;
+import dev.start.init.repository.user.UserHistoryRepository;
 import dev.start.init.repository.user.UserRepository;
 import dev.start.init.service.impl.UserDetailsBuilder;
 import dev.start.init.service.mail.EmailService;
@@ -21,25 +20,13 @@ import dev.start.init.service.security.EncryptionService;
 import dev.start.init.service.security.JwtService;
 import dev.start.init.service.user.RoleService;
 import dev.start.init.service.user.UserService;
-import dev.start.init.util.UserUtils;
 import dev.start.init.util.core.ValidationUtils;
-import dev.start.init.web.payload.request.SignUpRequest;
-import dev.start.init.web.payload.response.UserResponse;
 
-import java.io.IOException;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
-import freemarker.template.TemplateException;
-import jakarta.mail.MessagingException;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
@@ -49,8 +36,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,69 +56,88 @@ public class UserServiceImpl  implements UserService {
 
 
     private final Clock clock;
-    private final RoleService roleService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final EncryptionService encryptionService;
-    private final EmailService emailService;
+    private final UserHistoryRepository userHistoryRepository;
+    /**
+     * Create the userDto with the userDto instance given.
+     *
+     * @param accountDto the userDto with updated information
+     * @return the updated userDto.
+     * @throws NullPointerException in case the given entity is {@literal null}
+     *
+     */
+    @Override
+    @Transactional
+    public UserDto registerNewUserAccount(UserDto accountDto) throws EmailExistsException {
+
+        if (emailExist(accountDto.getEmail())) {
+            throw new EmailExistsException
+                    ("There is an account with that email adress: " + accountDto.getEmail());
+        }
+        User user = new User();
+        user.setFirstName(accountDto.getFirstName());
+        user.setLastName(accountDto.getLastName());
+        user.setUsername(accountDto.getUsername());
+        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+        user.setEmail(accountDto.getEmail());
+
+        user.setRoles(Arrays.asList(roleRepository.findByName(RoleType.ROLE_USER.getName())));
+        //return UserMapper.MAPPER.toUserDto(userRepository.save(user)) ;
+        LOG.info("user:{}  -is to be create",user);
+        User responseUser = userRepository.save(user);
+        LOG.info("user Response :{}  -is created",responseUser);
+        if(responseUser!=null) {
+            UserHistory userHistory = new UserHistory();
+            userHistory.setUserId(user.getId());
+            userHistory.setUserHistoryType(UserHistoryType.CREATED);
+            userHistory.setDescription("User doing registration");
+
+            userHistoryRepository.save(userHistory);
+            LOG.info("User History :{}is created ",userHistory);
+        }
+        return UserMapper.MAPPER.toUserDto(responseUser);
+    }
 
     /**
-     * Saves or updates the user with the user instance given.
+     * Update the user with the userDto instance given.
      *
-     * @param user the user with updated information
-     * @param isUpdate if the operation is an update
+     * @param userDto the user with updated information
      * @return the updated user.
      * @throws NullPointerException in case the given entity is {@literal null}
      */
 
     @Override
     @Transactional
-    @Loggable
-    public UserDto saveOrUpdate(final User user, final boolean isUpdate) {
-        Validate.notNull(user, UserConstants.USER_MUST_NOT_BE_NULL);
-
-        User persistedUser = isUpdate ? userRepository.saveAndFlush(user) : userRepository.save(user);
-        LOG.debug(UserConstants.USER_PERSISTED_SUCCESSFULLY, persistedUser);
-
-        return UserMapper.MAPPER.toUserDto(persistedUser);
-    }
-
-
-    /**
-     * Create the userDto with the userDto instance given.
-     *
-     * @param userDto the userDto with updated information
-     * @return the updated userDto.
-     * @throws NullPointerException in case the given entity is {@literal null}
-     *
-     */
-
-    @Override
-    @Transactional
-    public @NonNull UserDto createUser(final UserDto userDto) throws TemplateException, MessagingException, IOException {
-
-        return createUser(userDto, userDto.getUserRoles());
-    }
-
-
-    @Override
-    @Transactional
     public @NonNull UserDto updateUser(final UserDto userDto) {
-        Validate.notNull(userDto, UserConstants.USER_DTO_MUST_NOT_BE_NULL);
-        return persistUser(userDto, userDto.getUserRoles(), UserHistoryType.PROFILE_UPDATE, true);
+
+        User user = userRepository.findByPublicId(userDto.getPublicId());
+        if (user==null){
+            throw new ResourceNotFoundException(UserConstants.USER_NOT_FOUND);
+        }
+        //message null means user is valid
+        String message = isUserStatusInValid(user);
+        if( message != null){
+            throw new RuntimeException(message);
+        }
+
+        UserMapper.MAPPER.updateUserFromUserDto(userDto, user);
+        User updatedUser = userRepository.save(user);
+        LOG.info("User :{}  -is Updated",updatedUser);
+        if(updatedUser!=null){
+            UserHistory userHistory = new UserHistory();
+            userHistory.setUserId(updatedUser.getId());
+            userHistory.setUserHistoryType(UserHistoryType.PROFILE_UPDATE);
+            userHistory.setDescription("User doing update");
+            userHistoryRepository.save(userHistory);
+            LOG.info("User History :{}is added ",userHistory);
+        }
+        return UserMapper.MAPPER.toUserDto(updatedUser);
     }
 
-    /**
-     * Create the userDto with the userDto instance given.
-     *
-     * @param userDto the userDto with updated information
-     * @param roles the roles.
-     * @return the updated userDto.
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
 
+/*
     @Override
     @Transactional
     @Loggable
@@ -171,35 +175,19 @@ public class UserServiceImpl  implements UserService {
 
         emailService.sendVerificationEmail(userDto,encodedToken);
 
-
         return persistUser(userDto, roles, UserHistoryType.CREATED, false);
     }
+*/
 
     @Override
     public Page<UserDto> findAll(Pageable pageable) {
         Page<User> usersPage = userRepository.findAll(pageable);
-
         // Convert each User entity to UserDto
         List<UserDto> userDtoList = UserMapper.MAPPER.toUserDto(usersPage.getContent());
-
-        /*List<UserDto> UserDtos = usersPage.getContent().stream()
-                .map(UserMapper.MAPPER::toUserDto)
-                .collect(Collectors.toList());*/
         // Create a new Page of UserDto with the same pagination info
-
         return new PageImpl<>(userDtoList, pageable, usersPage.getTotalElements());
     }
 
-/*    *//**
-     * Returns users according to the details in the dataTablesInput or null if no user exists.
-     *
-     * @param dataTablesInput the dataTablesInput
-     * @return the dataTablesOutput
-     *//*
-    @Override
-    public DataTablesOutput<UserDto> getUsers(final DataTablesInput dataTablesInput) {
-        return userRepository.findAll(dataTablesInput);
-    }*/
 
     /**
      * Returns a user for the given id or null if a user could not be found.
@@ -264,8 +252,8 @@ public class UserServiceImpl  implements UserService {
      * @return a user for the given email or null if a user could not be found
      * @throws NullPointerException in case the given entity is {@literal null}
      */
-    @Override
     @Cacheable(CacheConstants.USERS)
+    @Override
     public UserDto findByEmail(final String email) {
         Validate.notNull(email, UserConstants.BLANK_EMAIL);
 
@@ -304,18 +292,6 @@ public class UserServiceImpl  implements UserService {
         return UserDetailsBuilder.buildUserDetails(storedUser);
     }
 
-    /**
-     * Checks if the username already exists.
-     *
-     * @param username the username
-     * @return <code>true</code> if username exists
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
-    @Override
-    public boolean existsByUsername(final String username) {
-        Validate.notNull(username, UserConstants.BLANK_USERNAME);
-        return userRepository.existsByUsernameOrderById(username);
-    }
 
     /**
      * Checks if the username or email already exists and enabled.
@@ -332,44 +308,6 @@ public class UserServiceImpl  implements UserService {
 
         return userRepository.existsByUsernameAndEnabledTrueOrEmailAndEnabledTrueOrderById(
                 username, email);
-    }
-
-    /**
-     * Validates the username exists and the token belongs to the user with the username.
-     *
-     * @param username the username
-     * @param token the token
-     * @return if token is valid
-     */
-    @Override
-    public boolean isValidUsernameAndToken(final String username, final String token) {
-        Validate.notNull(username, UserConstants.BLANK_USERNAME);
-
-        return userRepository.existsByUsernameAndVerificationTokenOrderById(username, token);
-    }
-
-    /**
-     * Update the user with the user instance given and the update type for record.
-     *
-     * @param userDto The user with updated information
-     * @param userHistoryType the history type to be recorded
-     * @return the updated user
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
-    @Override
-    @Caching(
-            evict = {
-                    @CacheEvict(value = CacheConstants.USERS, key = "#userDto.username"),
-                    @CacheEvict(value = CacheConstants.USERS, key = "#userDto.publicId"),
-                    @CacheEvict(value = CacheConstants.USERS, key = "#userDto.email"),
-                    @CacheEvict(value = CacheConstants.USER_DETAILS, allEntries = true)
-            })
-    @Transactional
-    public UserDto updateUser(UserDto userDto, UserHistoryType userHistoryType) {
-        Validate.notNull(userDto, UserConstants.USER_DTO_MUST_NOT_BE_NULL);
-
-        userDto.setVerificationToken(null);
-        return persistUser(userDto, Collections.emptySet(), userHistoryType, true);
     }
 
     /**
@@ -390,15 +328,14 @@ public class UserServiceImpl  implements UserService {
         Validate.notNull(publicId, UserConstants.BLANK_PUBLIC_ID);
 
         User storedUser = userRepository.findByPublicId(publicId);
-        LOG.debug("Enabling user {}", storedUser);
 
-        if (Objects.nonNull(storedUser)) {
-            storedUser.setEnabled(true);
-            UserDto userDto = UserMapper.MAPPER.toUserDto(storedUser);
-
-            return persistUser(userDto, Collections.emptySet(), UserHistoryType.ACCOUNT_ENABLED, true);
+        if (Objects.isNull(storedUser)) {
+            throw new UserNotFoundException(UserConstants.USER_NOT_FOUND);
         }
-        return null;
+        LOG.debug("Enabling user {}", storedUser);
+        storedUser.setEnabled(true);
+
+        return UserMapper.MAPPER.toUserDto(userRepository.save(storedUser));
     }
 
     /**
@@ -419,13 +356,14 @@ public class UserServiceImpl  implements UserService {
         Validate.notNull(publicId, UserConstants.BLANK_PUBLIC_ID);
 
         User storedUser = userRepository.findByPublicId(publicId);
-        if (Objects.nonNull(storedUser)) {
-            storedUser.setEnabled(false);
-            UserDto userDto = UserUtils.convertToUserDto(storedUser);
 
-            return persistUser(userDto, Collections.emptySet(), UserHistoryType.ACCOUNT_DISABLED, true);
+        if (Objects.isNull(storedUser)) {
+            throw new UserNotFoundException(UserConstants.USER_NOT_FOUND);
         }
-        return null;
+        LOG.debug("Disable user {}", storedUser);
+        storedUser.setEnabled(false);
+
+        return UserMapper.MAPPER.toUserDto(userRepository.save(storedUser));
     }
 
     /**
@@ -441,24 +379,20 @@ public class UserServiceImpl  implements UserService {
                     @CacheEvict(value = CacheConstants.USER_DETAILS, allEntries = true)
             })
     @Transactional
-    public void deleteUser(final String publicId) {
+    public UserDto deleteUser(final String publicId) {
         ValidationUtils.validateInputsWithMessage(UserConstants.BLANK_PUBLIC_ID, publicId);
 
-        // Number of rows deleted is expected to be 1 since publicId is unique
-        int numberOfRowsDeleted = userRepository.deleteByPublicId(publicId);
-        LOG.debug("Deleted {} user(s) with publicId {}", numberOfRowsDeleted, publicId);
+        //this is just soft delete that means we just set isActive false
+        //int numberOfRowsDeleted = userRepository.deleteByPublicId(publicId);
+
+        User user = userRepository.findByPublicId(publicId);
+        LOG.debug("Deleted {} user(s) with publicId {}", user, publicId);
+        user.setActive(false);
+
+        return UserMapper.MAPPER.toUserDto(userRepository.save(user));
     }
 
-    /**
-     * Transfers user details to a user object then persist to database.
-     *
-     * @param userDto the userDto
-     * @param roles the roles
-     * @param historyType the user history type
-     * @param isUpdate if the operation is an update
-     * @return the userDto
-     */
-    private UserDto persistUser(
+   /* private UserDto persistUser(
             final UserDto userDto,
             final Set<RoleDto> roles,
             final UserHistoryType historyType,
@@ -500,11 +434,36 @@ public class UserServiceImpl  implements UserService {
         // Add user history
         //user.addUserHistory(new UserHistory(UUID.randomUUID().toString(), user, historyType));
 
-        user.setUserRoles(roleSet);
+        user.setRoles(roleSet);
 
         LOG.debug("User to create {}",user);
 
         return saveOrUpdate(user, isUpdate);
+    }*/
+
+    public boolean emailExist(final String email) {
+        return userRepository.findByEmail(email) != null;
+    }
+
+    /*
+    * This method checks the validity of user
+    * by providing a string which is error message
+    * if it provides null that means user status valid
+    * */
+    public String isUserStatusInValid(final User user){
+        if(!user.isActive()){
+            return UserConstants.USER_DISABLED_MESSAGE;
+        }
+        else if(!user.isAccountNonExpired()){
+            return UserConstants.USER_EXPIRED_MESSAGE;
+        }
+        else if(!user.isAccountNonLocked()){
+            return UserConstants.USER_LOCKED_MESSAGE;
+        }
+        else if (!user.isCredentialsNonExpired()){
+            return UserConstants.USER_CREDENTIALS_EXPIRED_MESSAGE;
+        }
+        return null;
     }
 }
 

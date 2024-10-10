@@ -1,5 +1,7 @@
 package dev.start.init.dto;
 
+import lombok.NonNull;
+
 import java.time.LocalDateTime;
 
 public class BaseDto {
@@ -7,7 +9,8 @@ public class BaseDto {
 
     private short version;
 
-    private boolean active;
+    @NonNull
+    private boolean active = true;
 
     private Integer stateId = 0;
 

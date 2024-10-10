@@ -1,9 +1,11 @@
 package dev.start.init.service.user;
 
+import dev.start.init.constants.CacheConstants;
 import dev.start.init.dto.user.RoleDto;
 import dev.start.init.dto.user.UserDto;
 import dev.start.init.entity.user.User;
 import dev.start.init.enums.UserHistoryType;
+import dev.start.init.exception.user.EmailExistsException;
 import dev.start.init.web.payload.response.UserResponse;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
@@ -29,37 +32,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface UserService {
 
     /**
-     * Saves or updates the user with the user instance given.
-     *
-     * @param user the user with updated information
-     * @param isUpdate if the operation is an update
-     * @return the updated user.
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
-    UserDto saveOrUpdate(User user, boolean isUpdate);
-
-    /**
      * Create the userDto with the userDto instance given.
      *
      * @param userDto the userDto with updated information
      * @return the updated userDto.
      * @throws NullPointerException in case the given entity is {@literal null}
      */
-    @NonNull
-    UserDto createUser(final UserDto userDto) throws TemplateException, MessagingException, IOException;
+    UserDto registerNewUserAccount(UserDto userDto) throws EmailExistsException;
 
     @NonNull
-    public  UserDto updateUser(final UserDto userDto);
-    /**
-     * Create the userDto with the userDto instance given.
-     *
-     * @param userDto the userDto with updated information
-     * @param roles the roleTypes.
-     * @return the updated userDto.
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
-    @NonNull
-    UserDto createUser(final UserDto userDto, final Set<RoleDto> roles) throws TemplateException, MessagingException, IOException;
+    UserDto updateUser(final UserDto userDto);
+
 
     /**
      * Returns users.
@@ -68,14 +51,6 @@ public interface UserService {
      * @return the users
      */
     Page<UserDto> findAll(final Pageable pageable);
-
-    /**
-     * Returns users according to the details in the dataTablesInput or null if no user exists.
-     *
-     * @param dataTablesInput the dataTablesInput
-     * @return the dataTablesOutput
-     */
-    //DataTablesOutput<UserDto> getUsers(final DataTablesInput dataTablesInput);
 
     /**
      * Returns a user for the given id or null if a user could not be found.
@@ -104,38 +79,12 @@ public interface UserService {
      */
     UserDto findByUsername(String username);
 
-    /**
-     * Returns a user for the given email or null if a user could not be found.
-     *
-     * @param email The email associated to the user to find
-     * @return a user for the given email or null if a user could not be found
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
+    @Cacheable(CacheConstants.USERS)
     UserDto findByEmail(String email);
 
-    /**
-     * Find all users that failed to verify their email after a certain time.
-     *
-     * @return List of users that failed to verify their email.
-     */
     List<UserDto> findAllNotEnabledAfterAllowedDays();
 
-    /**
-     * Returns a userDetails for the given username or null if a user could not be found.
-     *
-     * @param username The username associated to the user to find
-     * @return a user for the given username or null if a user could not be found
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
     UserDetails getUserDetails(String username);
-
-    /**
-     * Checks if the username already exists.
-     *
-     * @param username the username
-     * @return <code>true</code> if username exists
-     */
-    boolean existsByUsername(String username);
 
     /**
      * Checks if the username or email already exists and enabled.
@@ -146,24 +95,6 @@ public interface UserService {
      */
     boolean existsByUsernameOrEmailAndEnabled(String username, String email);
 
-    /**
-     * Validates the username exists and the token belongs to the user with the username.
-     *
-     * @param username the username
-     * @param token the token
-     * @return if token is valid
-     */
-    boolean isValidUsernameAndToken(String username, String token);
-
-    /**
-     * Update the user with the user instance given and the update type for record.
-     *
-     * @param userDto The user with updated information
-     * @param userHistoryType the history type to be recorded
-     * @return the updated user
-     * @throws NullPointerException in case the given entity is {@literal null}
-     */
-    UserDto updateUser(UserDto userDto, UserHistoryType userHistoryType);
 
     /**
      * Enables the user by setting the enabled state to true.
@@ -189,5 +120,5 @@ public interface UserService {
      * @param publicId The publicId associated to the user to delete
      * @throws NullPointerException in case the given entity is {@literal null}
      */
-    void deleteUser(String publicId);
+    UserDto deleteUser(String publicId);
 }

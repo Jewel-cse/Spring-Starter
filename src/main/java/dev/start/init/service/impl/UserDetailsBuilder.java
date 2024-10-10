@@ -59,7 +59,7 @@ public final class UserDetailsBuilder implements UserDetails {
 
         // Build the authorities from the user's roles
         Set<GrantedAuthority> authorities = new HashSet<>();
-        user.getUserRoles()
+        user.getRoles()
                 .forEach(
                         userRole -> {
                             if (Objects.nonNull(userRole)) {

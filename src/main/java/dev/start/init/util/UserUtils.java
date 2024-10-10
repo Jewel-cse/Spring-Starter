@@ -11,18 +11,16 @@ import dev.start.init.entity.user.Role;
 import dev.start.init.entity.user.User;
 import dev.start.init.entity.user.UserHistory;
 import dev.start.init.enums.RoleType;
-import dev.start.init.mapper.UserHistoryMapper;
 import dev.start.init.mapper.UserMapper;
 import dev.start.init.service.impl.UserDetailsBuilder;
 import dev.start.init.util.core.ValidationUtils;
 import dev.start.init.web.payload.request.SignUpRequest;
-import dev.start.init.web.payload.response.UserResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import net.datafaker.Faker;
 import org.apache.commons.lang3.StringUtils;
@@ -83,7 +81,7 @@ public final class UserUtils {
      */
     public static User createUser(String username, RoleType roleType) {
         var user = createUser(username);
-        user.getUserRoles().add(new Role(roleType));
+        user.getRoles().add(new Role(roleType));
         return user;
     }
 
@@ -255,17 +253,7 @@ public final class UserUtils {
         return user;
     }
 
-    /**
-     * Transfers data from entity to a returnable object.
-     *
-     * @param userHistories stored userHistories details
-     * @return userHistories dto
-     */
-    public static List<UserHistoryDto> convertToUserHistoryDto(final Set<UserHistory> userHistories) {
-        ValidationUtils.validateInputs(userHistories);
 
-        return UserHistoryMapper.MAPPER.toUserHistoryDto(userHistories);
-    }
 
     /**
      * Enables and unlocks a user.
@@ -314,10 +302,10 @@ public final class UserUtils {
      * @param user the user
      * @return the role
      */
-    public static String getTopmostRole(User user) {
+    /*public static String getTopmostRole(User user) {
         ValidationUtils.validateInputs(user);
 
-        if (Objects.isNull(user.getUserRoles())) {
+        if (Objects.isNull(user.getRoles())) {
             return null;
         }
 
@@ -329,7 +317,7 @@ public final class UserUtils {
 
         return RoleType.ROLE_USER.getName();
     }
-
+*/
     /**
      * Returns the user profile or random image if not found.
      *
@@ -354,7 +342,7 @@ public final class UserUtils {
     }
 
     //used to controller level if necessary
-    public static UserResponse toUserResponse(UserDto userDto) {
+    /*public static UserResponse toUserResponse(UserDto userDto) {
         if ( userDto == null ) {
             return null;
         }
@@ -377,8 +365,8 @@ public final class UserUtils {
         userResponse.setUserRoles(userRoles);
         return userResponse;
     }
-
-    public static List<UserResponse> toUserResponse(List<UserDto> usertos) {
+*/
+    /*public static List<UserResponse> toUserResponse(List<UserDto> usertos) {
         if ( usertos == null ) {
             return null;
         }
@@ -389,7 +377,7 @@ public final class UserUtils {
 
         return userResponses;
     }
-
+*/
     private static List<RoleDto> userRoleSetToRoleList(Set<Role> userRoles) {
         List<RoleDto> roles = new ArrayList<>();
         for (Role usrRole : userRoles){

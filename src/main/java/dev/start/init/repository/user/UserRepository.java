@@ -70,10 +70,10 @@ public interface UserRepository
      * Check if user exists by username and verificationToken.
      *
      * @param username the username
-     * @param verificationToken the verification token
+     the verification token
      * @return if user exists with the given verification token
      */
-    Boolean existsByUsernameAndVerificationTokenOrderById(String username, String verificationToken);
+    //Boolean existsByUsernameAndVerificationTokenOrderById(String username, String verificationToken);
 
     Boolean existsByUsernameAndFailedLoginAttemptsGreaterThanOrderById(String username, int attempts);
 

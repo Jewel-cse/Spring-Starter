@@ -52,17 +52,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * It provides endpoints for creating, updating, enabling, disabling,
  * deleting users, and verifying user sign-up via token-based verification.
  *
- * <ul>
- *  <li><strong>GET /v1/users</strong> - Retrieves a paginated list of all users.</li>
- *  <li><strong>GET /v1/users/{publicId}</strong> - Retrieves a specific user by their public ID.</li>
- *  <li><strong>PUT /v1/users/{publicId}/enable</strong> - Enables a user account by their public ID.</li>
- *  <li><strong>PUT /v1/users/{publicId}/disable</strong> - Disables a user account by their public ID.</li>
- *  <li><strong>DELETE /v1/users/{publicId}</strong> - Deletes a user account by their public ID.</li>
- *  <li><strong>PUT /v1/users</strong> - Updates user details with data provided in the request body.</li>
- *  <li><strong>POST /v1/users</strong> - Creates a new user with details provided in the request body.</li>
- *  <li><strong>GET /v1/auth/verify-signup</strong> - Verifies the user's email address using a provided token.</li>
- * </ul>
- *
  * The controller uses several services to perform its actions:
  * <ul>
  *  <li><strong>UserService</strong> - Handles user creation, updates, and retrieval from the database.</li>
@@ -206,19 +195,14 @@ public class UserController {
     @Loggable
     @PostMapping
     @SecurityRequirements
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody SignUpRequest signUpRequest) throws TemplateException, MessagingException, IOException {
-        var userDto = UserUtils.convertToUserDto(signUpRequest);
-        //enable using utils function
-        //UserUtils.enableUser(userDto);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) throws TemplateException, MessagingException, IOException {
+        //var userDto = UserUtils.convertToUserDto(signUpRequest);
 
         if (userService.existsByUsernameOrEmailAndEnabled(userDto.getUsername(), userDto.getEmail())) {
             LOG.warn(UserConstants.USERNAME_OR_EMAIL_EXISTS);
             throw new UserAlreadyExistsException(UserConstants.USERNAME_OR_EMAIL_EXISTS);
         }
-
-        UserDto userDto1 = userService.createUser(userDto);
-
-        return ResponseEntity.ok(UserUtils.toUserResponse(userDto1));
+        return ResponseEntity.ok(userService.registerNewUserAccount(userDto));
     }
     /**
      * This mapping handles the continuation of sign up.
@@ -272,11 +256,11 @@ public class UserController {
         var userDto = userService.findByUsername(username);
 
 
-        if (Objects.isNull(userDto) || !token.equals(userDto.getVerificationToken())) {
+        /*if (Objects.isNull(userDto) || !token.equals(userDto.getVerificationToken())) {
           LOG.debug(ErrorConstants.INVALID_TOKEN);
           model.addAttribute(ErrorConstants.ERROR, ErrorConstants.INVALID_TOKEN);
           return null;
-        }
+        }*/
 
         if (userDto.getUsername().equals(username) && userDto.isEnabled()) {
             LOG.debug(SignUpConstants.ACCOUNT_EXISTS);
@@ -286,7 +270,7 @@ public class UserController {
 
         if (userDto.getUsername().equals(username)) {
             UserUtils.enableUser(userDto);
-            return userService.updateUser(userDto, UserHistoryType.VERIFIED);
+            return userService.updateUser(userDto);
         }
 
         return null;

@@ -11,6 +11,9 @@ import dev.start.init.entity.user.User;
 import dev.start.init.enums.OperationStatus;
 import dev.start.init.enums.TokenType;
 import dev.start.init.mapper.UserMapper;
+import dev.start.init.repository.user.UserRepository;
+import dev.start.init.service.mfa.GoogleAuthenticatorMfaService;
+import dev.start.init.service.security.BruteforceProtectionService;
 import dev.start.init.service.security.CookieService;
 import dev.start.init.service.security.EncryptionService;
 import dev.start.init.service.security.JwtService;
@@ -25,7 +28,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+
+import java.time.Clock;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,15 +50,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.security.auth.login.AccountLockedException;
+
 /**
  * This class attempt to authenticate with AuthenticationManager bean, add an authentication object
  * to SecurityContextHolder then Generate JWT token, then return JWT to a client.
  *
  * <p>The apis are given bellow : </p>
  * <ul>
- *     <li>api/v1/user/login</li>
- *     <li>api/v1/user/refresh-token</li>
- *     <li>api/v1/user/logout</li>
+ *     <li>login</li>
+ *     <li>refresh-token</li>
+ *     <li>logout</li>
  * </ul>
  * @author Md Jewel
  * @version 1.0
@@ -63,24 +72,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(SecurityConstants.API_V1_AUTH_ROOT_URL)
 public class AuthController {
 
+    private final UserRepository userRepository;
     @Value("${access-token-expiration-in-minutes}")
     private int accessTokenExpirationInMinutes;
+
+    @Value("${account-locked-duration}")
+    private int accountLockedDuration;
+
     private final JwtService jwtService;
     private final CookieService cookieService;
     private final EncryptionService encryptionService;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
+    private final BruteforceProtectionService bruteForceProtectionService;
+    private final GoogleAuthenticatorMfaService googleAuthenticatorMfaService;
 
 
     /**
-     * Attempts to authenticate with the provided credentials. If successful, a JWT token is returned
-     * with some user details.
+     * Attempts to authenticate with the provided credentials.Check refreshToken which comes from cookies is      *  valid or not, if not valid then generate new refresh toke and set the cookie or headers of response
+     * If credentials successfully , a JWT token is returned
+     * with some user details with cookies
      *
      * <p>A refresh token is generated and returned as a cookie.
      *
-     * @param refreshToken The refresh token
+     * @param refreshToken The refresh token from cookie
      * @param loginRequest the login request
-     * @return the jwt token details
+     * @return the jwt token with other details
      */
     //@SecurityRequirements
     @Operation(summary = "Authenticate User", description = "Logs in a user and returns a JWT token.")
@@ -88,11 +105,30 @@ public class AuthController {
     @PostMapping(value = SecurityConstants.LOGIN)
     public ResponseEntity<JwtResponseBuilder> authenticateUser(
             @CookieValue(required = false) String refreshToken,
-            @Valid @RequestBody LoginRequest loginRequest) {
+            @Valid @RequestBody LoginRequest loginRequest) throws AccountLockedException {
+
+        User user = userRepository.findByUsername(loginRequest.getUsername());
+        if(user !=null){
+            // Getting the current time
+            LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
+            Duration lockedDuration = Duration.between(user.getUpdatedAt(), now);
+
+            //if account is already locked and locked time up -> unclocked the user
+            if (!user.isAccountNonLocked() && lockedDuration.getSeconds() > accountLockedDuration ) {
+                bruteForceProtectionService.resetBruteForceCounter(user.getUsername());
+            }
+        }
 
         var username = loginRequest.getUsername();
         // Authentication will fail if the credentials are invalid and throw exception.
         SecurityUtils.authenticateUser(authenticationManager, username, loginRequest.getPassword());
+
+        //if authentication is done, then send the qr code url as png image
+        //step 1: generate secret -> save to 2factorAuth for the given user
+        //step 2: generate url and set up google authenticator app
+        //step 3: verify code -> sent a code and verify it
+        var secret = googleAuthenticatorMfaService.generateSecretKey();
+
 
         var decryptedRefreshToken = encryptionService.decrypt(refreshToken);
         var isRefreshTokenValid = jwtService.isValidJwtToken(decryptedRefreshToken);

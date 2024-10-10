@@ -24,7 +24,6 @@ import java.util.List;
  * @since 1.0
  */
 @Mapper(
-        uses = {UserHistoryMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         imports = {UserUtils.class})
 public interface UserMapper {
@@ -40,7 +39,7 @@ public interface UserMapper {
      */
     //@Mapping(target = "userRoles", expression = "java(UserUtils.getTopmostRole(user))")
     //@Mapping(target = "profileImage", expression = "java(UserUtils.getUserProfileImage(user))")
-    @Mapping(target = "userHistories", ignore = true)
+    //@Mapping(target = "userHistories", ignore = true)
     UserDto toUserDto(User user);
 
 
@@ -75,6 +74,7 @@ public interface UserMapper {
      * @return the user
      */
     @Mapping(target = "profileImage", expression = "java(UserUtils.getUserProfileImage(user))")
+    //@Mapping(target = "password", expression = "java(userDto.setPassword(passwordEncoder.encode(userDto.getPassword())))")
     User toUser(UserDto userDto);
 
 

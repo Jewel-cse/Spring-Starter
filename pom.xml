@@ -46,12 +46,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>com.h2database</groupId>
@@ -145,6 +145,7 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <!--Swagger ui -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -193,6 +194,14 @@
             <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!--Two-factor authentication-->
+        <dependency>
+            <groupId>dev.samstevens.totp</groupId>
+            <artifactId>totp</artifactId>
+            <version>1.7.1</version>
+        </dependency>
+
         <!-- Mail related dependency -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -214,6 +223,13 @@
             <artifactId>jasperreports</artifactId>
             <version>7.0.0</version>
         </dependency>
+        <!--Jsp for java server pages -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
     </dependencies>
 
 

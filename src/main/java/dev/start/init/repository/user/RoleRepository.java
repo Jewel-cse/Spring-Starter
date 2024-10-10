@@ -16,14 +16,6 @@ import org.springframework.stereotype.Repository;
 public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     /**
-     * Merges an existing role with the role instance given.
-     *
-     * @param role the role
-     * @return the persisted role with assigned id
-     */
-    //Role merge(Role role);
-
-    /**
      * Gets role associated with required name.
      *
      * @param name name of role.

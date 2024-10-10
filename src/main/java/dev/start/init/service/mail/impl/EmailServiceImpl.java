@@ -73,7 +73,7 @@ public class EmailServiceImpl implements EmailService {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        String resetPasswordUrl = appUrl + "/api/v1/user/reset-password?token=" + user.getVerificationToken();
+        String resetPasswordUrl = appUrl + "/api/v1/user/reset-password?token=" + user.getPublicId();
 
         Map<String, Object> model = new HashMap<>();
         model.put("userName", user.getLastName());

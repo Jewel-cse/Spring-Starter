@@ -9,8 +9,15 @@ public interface SequenceConstants {
 
     //Role constants
     String ROLE_SEQUENCE = "RoleSequence";
-    int ROLE_SEQUENCE_INITIAL_VALUE = 222;
-    int ROLE_SEQUENCE_ALLOCATION = 2;
+    int ROLE_SEQUENCE_INITIAL_VALUE = 1111;
+    int ROLE_SEQUENCE_ALLOCATION = 1;
+
+    //Privilege sequence
+    String PRIVILEGE_SEQUENCE = "PrivilegeSequence";
+    int PRIVILEGE_SEQUENCE_INITIAL_VALUE = 1111;
+    int PRIVILEGE_SEQUENCE_ALLOCATION = 1;
+
+
 
     //Permission constants
     String ROLE_PERMISSION_SEQUENCE = "RolePermissionSequence";

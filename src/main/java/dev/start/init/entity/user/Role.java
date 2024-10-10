@@ -3,19 +3,12 @@ package dev.start.init.entity.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.start.init.constants.SequenceConstants;
 import dev.start.init.enums.RoleType;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.*;
 import lombok.Data;
-import jakarta.persistence.Cacheable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import lombok.NoArgsConstructor;
@@ -42,10 +35,18 @@ public class Role implements Serializable {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "userRoles",fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     @JsonIgnore
-    @ToString.Exclude
-    private Set<User> users;
+    private Collection<User> users;
+
+    @ManyToMany
+    @JoinTable(
+            name = "roles_privileges",
+            joinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "privilege_id", referencedColumnName = "id"))
+    private Collection<Privilege> privileges;
 
     /**
      * The Role class creates a role for the user.
@@ -62,31 +63,7 @@ public class Role implements Serializable {
         this.id = id;
         this.name = name;
     }
-
-    /**
-     * Evaluate the equality of Role class.
-     *
-     * @param other is the object to use in equality test.
-     * @return the equality of both objects.
-     */
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof Role that)) {
-            return false;
-        }
-        return Objects.equals(name, that.name);
-    }
-
-    /**
-     * Hashcode of Role base on name.
-     *
-     * @return the hash value.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
+    public Role(String name) {
+        this.name = name;
     }
 }
