@@ -7,6 +7,8 @@ import java.util.Optional;
 import lombok.NonNull;
 import org.springframework.data.jpa.datatables.repository.DataTablesRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
@@ -20,8 +22,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @RepositoryRestResource(exported = false)
-public interface UserRepository
-        extends DataTablesRepository<User, Long>, JpaRepository<User, Long> {
+public interface UserRepository extends  JpaRepository<User, Long> {
 
     @NonNull
     @Override
@@ -42,9 +43,7 @@ public interface UserRepository
      * @param username username used to search for user.
      * @return User found.
      */
-//  @EntityGraph(
-//      type = EntityGraphType.FETCH,
-//      attributePaths = {"userRoles"})
+
     User findByUsername(String username);
 
     /**

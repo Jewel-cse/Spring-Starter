@@ -7,7 +7,9 @@ import dev.start.init.constants.SecurityConstants;
 import dev.start.init.constants.apiEndPoint.API_V1;
 import dev.start.init.constants.user.SignUpConstants;
 import dev.start.init.dto.user.UserDto;
+import dev.start.init.entity.user.MultiFactorAuth;
 import dev.start.init.entity.user.User;
+import dev.start.init.enums.MultiFactorMethodType;
 import dev.start.init.enums.OperationStatus;
 import dev.start.init.enums.TokenType;
 import dev.start.init.mapper.UserMapper;
@@ -18,6 +20,7 @@ import dev.start.init.service.security.CookieService;
 import dev.start.init.service.security.EncryptionService;
 import dev.start.init.service.security.JwtService;
 import dev.start.init.service.user.UserService;
+import dev.start.init.util.AuthUtils;
 import dev.start.init.util.core.SecurityUtils;
 import dev.start.init.web.payload.request.LoginRequest;
 import dev.start.init.web.payload.request.SignUpRequest;
@@ -32,23 +35,15 @@ import jakarta.validation.Valid;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountLockedException;
 
@@ -87,6 +82,8 @@ public class AuthController {
     private final BruteforceProtectionService bruteForceProtectionService;
     private final GoogleAuthenticatorMfaService googleAuthenticatorMfaService;
 
+    private final AuthUtils authUtils;
+
 
     /**
      * Attempts to authenticate with the provided credentials.Check refreshToken which comes from cookies is      *  valid or not, if not valid then generate new refresh toke and set the cookie or headers of response
@@ -103,7 +100,7 @@ public class AuthController {
     @Operation(summary = "Authenticate User", description = "Logs in a user and returns a JWT token.")
     @Loggable(level = "debug")
     @PostMapping(value = SecurityConstants.LOGIN)
-    public ResponseEntity<JwtResponseBuilder> authenticateUser(
+    public ResponseEntity<?> authenticateUser(
             @CookieValue(required = false) String refreshToken,
             @Valid @RequestBody LoginRequest loginRequest) throws AccountLockedException {
 
@@ -113,7 +110,7 @@ public class AuthController {
             LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
             Duration lockedDuration = Duration.between(user.getUpdatedAt(), now);
 
-            //if account is already locked and locked time up -> unclocked the user
+            //if account is already locked and locked time up -> unlocked the user
             if (!user.isAccountNonLocked() && lockedDuration.getSeconds() > accountLockedDuration ) {
                 bruteForceProtectionService.resetBruteForceCounter(user.getUsername());
             }
@@ -123,14 +120,23 @@ public class AuthController {
         // Authentication will fail if the credentials are invalid and throw exception.
         SecurityUtils.authenticateUser(authenticationManager, username, loginRequest.getPassword());
 
-        //if authentication is done, then send the qr code url as png image
-        //step 1: generate secret -> save to 2factorAuth for the given user
-        //step 2: generate url and set up google authenticator app
-        //step 3: verify code -> sent a code and verify it
-        var secret = googleAuthenticatorMfaService.generateSecretKey();
+        if(user.isMfaEnable()){
+            return ResponseEntity.ok(new String("OTP_REQUIRED"));
+        }
 
+        /*//if authentication is done, then send the qr code url as png image
+        MultiFactorAuth multiFactorAuth = new MultiFactorAuth();
+        if(user.isMfaEnable()){
+            switch (methodType){
+                case "GOOGLE_AUTHENTICATOR":
+                    multiFactorAuth = googleAuthenticatorMfaService.verifyTotpCode(inputCode);
+            }
+        }
+        if(multiFactorAuth == null){
+            throw new RuntimeException("Two factor authentication failed");
+        }*/
 
-        var decryptedRefreshToken = encryptionService.decrypt(refreshToken);
+        /*var decryptedRefreshToken = encryptionService.decrypt(refreshToken);
         var isRefreshTokenValid = jwtService.isValidJwtToken(decryptedRefreshToken);
 
         var responseHeaders = new HttpHeaders();
@@ -140,7 +146,9 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
-                .body(JwtResponseBuilder.buildJwtResponse(encryptedAccessToken));
+                .body(JwtResponseBuilder.buildJwtResponse(encryptedAccessToken));*/
+
+        return authUtils.refreshAccessToken(refreshToken,username);
     }
 
     /**
@@ -198,25 +206,5 @@ public class AuthController {
         return ResponseEntity.ok().headers(responseHeaders).body(logoutResponse);
     }
 
-    /**
-     * Creates a refresh token if expired and adds it to the cookies.
-     *
-     * @param username the username
-     * @param isRefreshValid if the refresh token is valid
-     * @param headers the http headers
-     */
-    private String updateCookies(String username, boolean isRefreshValid, HttpHeaders headers) {
-
-        if (!isRefreshValid) {
-            var token = jwtService.generateJwtToken(username);
-            var refreshDuration = Duration.ofDays(SecurityConstants.DEFAULT_TOKEN_DURATION);
-
-            var encryptedToken = encryptionService.encrypt(token);
-            cookieService.addCookieToHeaders(headers, TokenType.REFRESH, encryptedToken, refreshDuration);
-        }
-
-        var accessTokenExpiration = DateUtils.addMinutes(new Date(), accessTokenExpirationInMinutes);
-        return jwtService.generateJwtToken(username, accessTokenExpiration);
-    }
 }
 

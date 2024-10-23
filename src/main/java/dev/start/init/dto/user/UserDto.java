@@ -1,5 +1,6 @@
 package dev.start.init.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.start.init.constants.user.UserConstants;
 import dev.start.init.dto.BaseDto;
@@ -41,6 +42,7 @@ public class UserDto extends BaseDto implements Serializable {
     @Size(min = 4, message = UserConstants.PASSWORD_SIZE)
     @NotBlank(message = UserConstants.BLANK_PASSWORD)
     @ToString.Exclude
+    @JsonIgnore
     private String password;
 
     private String firstName;
@@ -62,6 +64,8 @@ public class UserDto extends BaseDto implements Serializable {
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
+    private boolean mfaEnable;
+
 
     private Collection<Role> roles;
 

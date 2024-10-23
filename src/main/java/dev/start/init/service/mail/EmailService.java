@@ -15,6 +15,8 @@ import java.io.IOException;
  */
 public interface EmailService {
 
+    void sendOtpEmail(String recipientEmail, String otp) throws MessagingException, IOException, TemplateException;
+
     /**
      * Sends a registration verification email to the user.
      *

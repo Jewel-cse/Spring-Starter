@@ -1,6 +1,9 @@
 package dev.start.init.service.mfa;
 
-public interface SmsMfaService  {
+import dev.start.init.entity.user.MultiFactorAuth;
+import dev.start.init.entity.user.User;
+
+public interface SmsMfaService extends MfaService {
 
     /**
      * Sends an SMS verification code to the user's phone number.
@@ -8,15 +11,19 @@ public interface SmsMfaService  {
      * @param phoneNumber the phone number to send the code to
      * @return the generated SMS code
      */
-    String sendSmsCode(String phoneNumber);
+    String sendOtp(String phoneNumber);
 
     /**
      * Verifies the SMS code against the stored code.
      *
-     * @param inputCode the code entered by the user
-     * @param storedCode the code stored in the system
+     * @param phoneNumber the code entered by the user
+     * @param otp the code stored in the system
      * @return true if the code matches, false otherwise
      */
-    boolean verifySmsCode(String inputCode, String storedCode);
+    boolean verifyOtp(String phoneNumber, String otp);
+
+    MultiFactorAuth initializeMfaAuthEntity(User user);
+
+
 }
 

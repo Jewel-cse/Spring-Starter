@@ -1,6 +1,7 @@
 package dev.start.init.config.security;
 
 
+import static dev.start.init.constants.apiEndPoint.API_V1.TWO_FACTOR_URL;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import dev.start.init.config.security.jwt.JwtAuthTokenFilter;
@@ -78,6 +79,10 @@ public class ApiWebSecurityConfig {
                             requests
                                     .requestMatchers(
                                             new AntPathRequestMatcher(SecurityConstants.API_V1_AUTH_URL_MAPPING))
+                                    .permitAll();
+                            requests
+                                    .requestMatchers(
+                                            new AntPathRequestMatcher(TWO_FACTOR_URL+"/verify-otp",HttpMethod.POST.name()))
                                     .permitAll();
 
                             requests

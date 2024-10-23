@@ -46,6 +46,28 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.url}")
     private String appUrl;
 
+
+    @Override
+    public void sendOtpEmail(String recipientEmail, String otp) throws MessagingException {
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        // Set email properties
+        helper.setTo(recipientEmail);
+        helper.setSubject("Your OTP Code");
+        helper.setFrom(fromAddress);
+
+        // Email body (plain text or HTML)
+        String emailContent = "Your One-Time Password (OTP) is: " + otp ;
+
+        // Set the content of the email (true for HTML)
+        helper.setText(emailContent);
+
+        // Send the email
+        javaMailSender.send(message);
+    }
+
     @Override
     public void sendVerificationEmail(UserDto user,String token) throws IOException, TemplateException, MessagingException {
         // Create a new MimeMessage and MimeMessageHelper for each email

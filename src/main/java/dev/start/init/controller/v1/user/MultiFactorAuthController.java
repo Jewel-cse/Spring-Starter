@@ -1,44 +1,51 @@
 package dev.start.init.controller.v1.user;
 
 import dev.samstevens.totp.exceptions.QrGenerationException;
+import dev.start.init.constants.user.UserConstants;
+import dev.start.init.dto.user.UserDto;
 import dev.start.init.entity.user.MultiFactorAuth;
 import dev.start.init.entity.user.User;
 import dev.start.init.enums.MultiFactorMethodType;
+import dev.start.init.exception.ResourceNotFoundException;
 import dev.start.init.exception.user.UserAlreadyExistsException;
 import dev.start.init.exception.user.UserNotFoundException;
+import dev.start.init.mapper.UserMapper;
 import dev.start.init.repository.user.MultiFactorAuthRepository;
 import dev.start.init.repository.user.UserRepository;
+import dev.start.init.service.mfa.EmailMfaService;
 import dev.start.init.service.mfa.GoogleAuthenticatorMfaService;
+import dev.start.init.service.mfa.SmsMfaService;
+import dev.start.init.service.mfa.WhatsAppMfaService;
 import dev.start.init.service.user.UserService;
-import dev.start.init.web.payload.request.OtpVerificationRequest;
+import dev.start.init.util.AuthUtils;
+import dev.start.init.util.core.SecurityUtils;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 import static dev.start.init.constants.apiEndPoint.API_V1.TWO_FACTOR_URL;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(TWO_FACTOR_URL)
 public class MultiFactorAuthController {
 
     private final UserRepository userRepository;
-    private GoogleAuthenticatorMfaService googleAuthenticatorMfaService;
+    private final GoogleAuthenticatorMfaService googleAuthenticatorMfaService;
+    private final WhatsAppMfaService whatsAppMfaService;
+    private final SmsMfaService smsMfaService;
+    private final EmailMfaService emailMfaService;
     private final MultiFactorAuthRepository mfaAuthRepository;
     private final UserService userService;
+    private final AuthUtils authUtils;
 
-    public MultiFactorAuthController(MultiFactorAuthRepository mfaAuthRepository,
-                                     UserService userService,
-                                     GoogleAuthenticatorMfaService googleAuthenticatorMfaService, UserRepository userRepository) {
-        this.mfaAuthRepository = mfaAuthRepository;
-        this.userService = userService;
-        this.googleAuthenticatorMfaService = googleAuthenticatorMfaService;
-        this.userRepository = userRepository;
-    }
 
-    //@RequestParam("secretKey") String secretKey,
     @GetMapping("/generate-qr-code")
     public ResponseEntity<byte[]> getQrCodePng(@RequestParam("username") String username) throws QrGenerationException {
 
@@ -47,8 +54,8 @@ public class MultiFactorAuthController {
             throw new UserNotFoundException(username);
         }
 
-        MultiFactorAuth multiFactorAuth = mfaAuthRepository.findByUserAndMethodType(user, MultiFactorMethodType.GOOGLE_AUTHENTICATOR);
-        if(user.isMfaEnable() && multiFactorAuth != null && multiFactorAuth.isActive()){
+        Optional<MultiFactorAuth> multiFactorAuth = mfaAuthRepository.findByUserIdAndMethodType(user.getId(), MultiFactorMethodType.GOOGLE_AUTHENTICATOR);
+        if(multiFactorAuth.isPresent()){
             throw new UserAlreadyExistsException("Google authenticator is already active");
         }
         try {
@@ -73,49 +80,88 @@ public class MultiFactorAuthController {
 
     //set user mfa enable
     @PostMapping("/enable")
-    public String enable2FA(@RequestParam Long userId,@RequestBody List<String> methodType) {
-        //for google auth:
-
-        //step1: generate secret key for google auth
-        //step2: store secrete key,user in mfa
-        //step3(optional): user -> mfa -> pending
-
-        //step4: generate qr-code and setup google auth
-        //step5: verify otp
-
-
-
-       /* try {
-            // Fetch the user by ID
-            User user = UserMapper.MAPPER.toUser(userService.findById(userId));
-
-            // Generate a secret key for the user
-            String secretKey = googleAuthenticatorMfaService.generateSecretKey();
-
-            googleAuthenticatorMfaService.saveMfaAuthEntity(user, secretKey);
-
-            // Generate the QR code URL (Google Authenticator URI)
-            String totpUri = googleAuthenticatorMfaService.getQrCodeUrl(secretKey, user.getUsername());
-
-            System.out.println("Otp: "+totpUri);
-
-            model.addAttribute("totpUri", totpUri);
-
-            // Return the QR code URL
-            return "showQrCode";
-
-        } catch (Exception e) {
-            // Handle specific exceptions (e.g., user not found, service errors, etc.)
-            model.addAttribute("error", e.getMessage());
-            return "error";
-        }*/
-        return null;
+    public ResponseEntity<?> enable2FA() {
+        UserDto userDto = SecurityUtils.getAuthorizedUserDto();
+        if (userDto == null){
+            throw new UserNotFoundException("User not found !!");
+        }
+        return ResponseEntity.ok(userService.enableMfa(userDto.getPublicId())) ;
+    }
+    @PostMapping("/disable")
+    public ResponseEntity<?> disable2FA() {
+        UserDto userDto = SecurityUtils.getAuthorizedUserDto();
+        if (userDto == null){
+            throw new UserNotFoundException("User not found !!");
+        }
+        return ResponseEntity.ok(userService.disableMfa(userDto.getPublicId())) ;
     }
 
+    //verify otp for google authenticator
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verify2FA(@RequestBody String otpCode) {
-        return ResponseEntity.ok(googleAuthenticatorMfaService.verifyTotpCode(otpCode));
+    public ResponseEntity<?> verify2FA(@RequestParam("otpCode") int otpCode,
+                                       @CookieValue(required = false) String refreshToken,
+                                       @RequestParam("username") String username) {
+        MultiFactorAuth multiFactorAuth = googleAuthenticatorMfaService.verifyTotpCode(otpCode,username);
+        if(multiFactorAuth == null){
+            throw new UserNotFoundException("This Authenticator not Valid!!");
+        }
+        return ResponseEntity.ok(authUtils.refreshAccessToken(refreshToken,username).getBody()) ;
     }
-    // Endpoint to verify the 2FA code
+
+    /*
+    * For whatsapp sms send and verify
+    *
+    * */
+
+    // Endpoint to send OTP
+    @PostMapping("/send-otp-whatsapp")
+    public ResponseEntity<String> sendOtp(@RequestParam("phoneNumber") String phoneNumber) {
+        try {
+            smsMfaService.sendOtp(phoneNumber);
+            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error sending OTP: " + e.getMessage());
+        }
+    }
+
+    // Endpoint to verify OTP
+    @PostMapping("/verify-otp-whatsapp")
+    public ResponseEntity<String> verifyOtp(
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("otp") String otp) {
+        boolean isValid = whatsAppMfaService.verifyOtp(phoneNumber, otp);
+        if (isValid) {
+            return ResponseEntity.ok("OTP verified successfully");
+        } else {
+            return ResponseEntity.status(400).body("Invalid OTP");
+        }
+    }
+
+    /*
+    * Using email send and verify email
+    * */
+
+    @PostMapping("/send-otp-email")
+    public ResponseEntity<String> sendOtpEmail(@RequestParam("email") @Email  String email) {
+        try {
+            emailMfaService.sendEmailCode(email);
+            return ResponseEntity.ok("OTP sent successfully to " + email);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error sending OTP: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-otp-email")
+    public ResponseEntity<String> verifyOtpEmail(
+            @RequestParam("email") String email,
+            @RequestParam("otp") String otp) {
+
+        boolean isValid = emailMfaService.verifyEmailCode(otp,email);
+        if (isValid) {
+            return ResponseEntity.ok("OTP verified successfully");
+        } else {
+            return ResponseEntity.status(400).body("Invalid OTP");
+        }
+    }
 }
 

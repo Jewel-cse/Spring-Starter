@@ -121,4 +121,7 @@ public interface UserService {
      * @throws NullPointerException in case the given entity is {@literal null}
      */
     UserDto deleteUser(String publicId);
+
+    UserDto enableMfa(String publicId);
+    UserDto disableMfa(String publicId);
 }

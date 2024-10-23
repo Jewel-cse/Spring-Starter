@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.start.init.enums.MultiFactorMethodType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -18,6 +20,7 @@ public class MultiFactorAuth {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
+    @ToString.Exclude
     private User user;
 
     @Enumerated(EnumType.STRING)

@@ -14,13 +14,24 @@ import java.util.Optional;
 @Repository
 public interface MultiFactorAuthRepository extends JpaRepository<MultiFactorAuth, Long> {
 
-    MultiFactorAuth findByUserAndMethodType(User user, MultiFactorMethodType methodType);
+    @Query("SELECT m FROM MultiFactorAuth m WHERE m.user.publicId = :publicId AND m.methodType = :methodType")
+    Optional<MultiFactorAuth> findByUserPublicIdAndMethodType(@Param("publicId") String publicId, @Param("methodType") MultiFactorMethodType methodType);
+
+    @Query("SELECT m FROM MultiFactorAuth m WHERE m.user.username = :username AND m.methodType = :methodType")
+    Optional<MultiFactorAuth> findByUsernameAndMethodType(@Param("username") String username, @Param("methodType") MultiFactorMethodType methodType);
+
+    @Query("SELECT m FROM MultiFactorAuth m WHERE m.user.id = :userId AND m.methodType = :methodType")
+    Optional<MultiFactorAuth> findByUserIdAndMethodType(@Param("userId") Long userId, @Param("methodType") MultiFactorMethodType methodType);
+
 
     @Query("SELECT Mfa FROM MultiFactorAuth Mfa WHERE Mfa.user.id = :userId")
     Optional<MultiFactorAuth> findByUserId(Long userId);
 
     @Query("SELECT Mfa FROM MultiFactorAuth Mfa WHERE Mfa.user.username = :username")
     Optional<MultiFactorAuth> findByUsername(String username);
+
+    @Query("SELECT Mfa FROM MultiFactorAuth Mfa WHERE Mfa.user.email = :email")
+    Optional<MultiFactorAuth> findByEmail(String email);
 
     @Modifying
     @Query("DELETE FROM MultiFactorAuth Mfa WHERE Mfa.user.id = :userId")

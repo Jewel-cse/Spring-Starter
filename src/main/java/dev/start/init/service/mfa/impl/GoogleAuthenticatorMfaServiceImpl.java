@@ -1,5 +1,6 @@
 package dev.start.init.service.mfa.impl;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
 import dev.samstevens.totp.code.*;
 import dev.samstevens.totp.exceptions.QrGenerationException;
 import dev.samstevens.totp.qr.QrData;
@@ -13,15 +14,22 @@ import dev.start.init.entity.user.MultiFactorAuth;
 import dev.start.init.entity.user.User;
 import dev.start.init.enums.MultiFactorMethodType;
 import dev.start.init.exception.ResourceNotFoundException;
+import dev.start.init.exception.user.UserNotFoundException;
+import dev.start.init.mapper.UserMapper;
 import dev.start.init.repository.user.MultiFactorAuthRepository;
 import dev.start.init.repository.user.UserRepository;
 import dev.start.init.service.mfa.GoogleAuthenticatorMfaService;
 import dev.start.init.util.core.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.Optional;
 
+import static dev.start.init.dto.response.error.CustomErrorAdvice.logger;
+
+@Slf4j
 @Service
 public class GoogleAuthenticatorMfaServiceImpl implements GoogleAuthenticatorMfaService {
 
@@ -38,19 +46,20 @@ public class GoogleAuthenticatorMfaServiceImpl implements GoogleAuthenticatorMfa
         this.issuer = issuer;
     }
 
+    //google authenticator default: Base32 default and bellow
     private final int digit = 6;
     private final int period=30;
 
 
     @Override
     public String generateSecretKey() {
-        SecretGenerator secretGenerator = new DefaultSecretGenerator(64);
+        SecretGenerator secretGenerator = new DefaultSecretGenerator();
         return secretGenerator.generate();
     }
 
     @Override
     public byte[] getQrCodeUrl(String secretKey, String username) throws QrGenerationException {
-
+        logger.info("Qr code generation start for {} with secret key: {}", username, secretKey);
         //return String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, username, secretKey, issuer);
 
         try {
@@ -79,21 +88,44 @@ public class GoogleAuthenticatorMfaServiceImpl implements GoogleAuthenticatorMfa
     }
 
     @Override
-    public MultiFactorAuth verifyTotpCode(String inputCode) {
+    public MultiFactorAuth verifyTotpCode(int inputCode,String username) {
 
-        User user = (User) SecurityUtils.getAuthentication().getPrincipal();
-        MultiFactorAuth multiFactorAuth =mfaRepository.findByUserAndMethodType(user,MultiFactorMethodType.GOOGLE_AUTHENTICATOR);
+        logger.info("verify start for user : {}", username);
 
-        TimeProvider timeProvider = new SystemTimeProvider();
-        CodeGenerator codeGenerator = new DefaultCodeGenerator(HashingAlgorithm.SHA1);
-        CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
-        boolean isValid= verifier.isValidCode(multiFactorAuth.getSecretCode(), inputCode);
-        if(isValid){
-            multiFactorAuth.setVerified(true);
-            multiFactorAuth.setActive(true);
-            return mfaRepository.save(multiFactorAuth);
+        User user = userRepository.findByUsername(username);
+        if(user==null){
+            throw new UserNotFoundException("User not found");
         }
-        return null;
+
+        Optional<MultiFactorAuth> multiFactorAuth =mfaRepository.findByUserIdAndMethodType(user.getId(),MultiFactorMethodType.GOOGLE_AUTHENTICATOR);
+        if (multiFactorAuth.isEmpty()){
+            throw new ResourceNotFoundException("This authenticator is not active");
+        }
+
+        /*TimeProvider timeProvider = new SystemTimeProvider();
+        CodeGenerator codeGenerator = new DefaultCodeGenerator(HashingAlgorithm.SHA1,period);
+        CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
+        ((DefaultCodeVerifier) verifier).setTimePeriod(period);
+        ((DefaultCodeVerifier) verifier).setAllowedTimePeriodDiscrepancy(1);
+
+        logger.info("secret key is :  {}",multiFactorAuth.get().getSecretCode());
+        logger.info("otp is :  {}",inputCode);
+        boolean isValid= verifier.isValidCode(multiFactorAuth.get().getSecretCode(), inputCode);*/
+
+        GoogleAuthenticator gAuth = new GoogleAuthenticator();
+        boolean isValid = gAuth.authorize(multiFactorAuth.get().getSecretCode(),inputCode);
+
+
+        if(!isValid){
+            logger.info("Mfa auth entity: {}",multiFactorAuth.get());
+            LOG.info("User Entity: username={}, email={}, id={}", user.getUsername(), user.getEmail(), user.getId());
+            logger.info("Otp is not valid for {}",username);
+            return null;
+        }
+        multiFactorAuth.get().setVerified(true);
+        multiFactorAuth.get().setActive(true);
+        MultiFactorAuth verifiedMultiFactorAuth = mfaRepository.save(multiFactorAuth.get());
+        return verifiedMultiFactorAuth;
     }
 
     @Override
@@ -109,8 +141,7 @@ public class GoogleAuthenticatorMfaServiceImpl implements GoogleAuthenticatorMfa
         multiFactorAuth.setSecretCode(secret);
         multiFactorAuth.setMethodType(MultiFactorMethodType.GOOGLE_AUTHENTICATOR);
 
-        mfaRepository.save(multiFactorAuth);
-        return null;
+        return mfaRepository.save(multiFactorAuth);
     }
 
     @Override

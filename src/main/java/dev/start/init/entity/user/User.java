@@ -13,6 +13,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -77,6 +78,7 @@ public class User extends BaseEntity<Long> implements Serializable {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @ToString.Exclude
     private List<MultiFactorAuth> MfaFactorAuthMethods;
 
     /**

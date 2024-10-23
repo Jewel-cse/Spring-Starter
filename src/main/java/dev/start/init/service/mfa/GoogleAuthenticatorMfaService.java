@@ -21,9 +21,11 @@ public interface GoogleAuthenticatorMfaService extends MfaService {
      * @param inputCode the code entered by the user
      * @return true if the code is valid, false otherwise
      */
-    MultiFactorAuth verifyTotpCode(String inputCode);
+    MultiFactorAuth verifyTotpCode(int inputCode,String username);
 
     boolean isEnabled(User user);
 
     MultiFactorAuth initializeMfaAuthEntity(User user, String secret);
+
+
 }

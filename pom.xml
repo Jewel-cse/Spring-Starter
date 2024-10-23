@@ -202,6 +202,20 @@
             <version>1.7.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.warrenstrange</groupId>
+            <artifactId>googleauth</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.twilio.sdk</groupId>
+            <artifactId>twilio</artifactId>
+            <version>10.6.1</version>
+        </dependency>
+
+
+
         <!-- Mail related dependency -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

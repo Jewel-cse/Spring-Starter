@@ -16,6 +16,9 @@ import dev.start.init.repository.user.UserHistoryRepository;
 import dev.start.init.repository.user.UserRepository;
 import dev.start.init.service.impl.UserDetailsBuilder;
 import dev.start.init.service.mail.EmailService;
+import dev.start.init.service.mfa.EmailMfaService;
+import dev.start.init.service.mfa.SmsMfaService;
+import dev.start.init.service.mfa.impl.SmsMfaServiceImpl;
 import dev.start.init.service.security.EncryptionService;
 import dev.start.init.service.security.JwtService;
 import dev.start.init.service.user.RoleService;
@@ -60,6 +63,8 @@ public class UserServiceImpl  implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserHistoryRepository userHistoryRepository;
+    private final SmsMfaService smsMfaService;
+    private final EmailMfaService emailMfaService;
     /**
      * Create the userDto with the userDto instance given.
      *
@@ -390,6 +395,42 @@ public class UserServiceImpl  implements UserService {
         user.setActive(false);
 
         return UserMapper.MAPPER.toUserDto(userRepository.save(user));
+    }
+
+    /**
+     * @param publicId
+     * @return
+     */
+    @Override
+    @Transactional
+    public UserDto enableMfa(String publicId) {
+        Validate.notNull(publicId, UserConstants.BLANK_PUBLIC_ID);
+
+        //step 1: setMfaEnable->true,
+        //see the user having -> phone no, email and default google auth setup
+        //for google auth : generate qr api call-> set up-> verify code done,
+
+        User user  = userRepository.findByPublicId(publicId);
+        user.setMfaEnable(true);
+        User updatedUser = userRepository.save(user);
+
+        if(user.getPhone() != null) {
+            smsMfaService.initializeMfaAuthEntity(updatedUser);
+        }
+        if(user.getEmail() != null) {
+            emailMfaService.initializeMfaAuthEntity(updatedUser);
+        }
+        return UserMapper.MAPPER.toUserDto(updatedUser);
+    }
+    @Override
+    @Transactional
+    public UserDto disableMfa(String publicId) {
+        Validate.notNull(publicId, UserConstants.BLANK_PUBLIC_ID);
+
+        User user  = userRepository.findByPublicId(publicId);
+        user.setMfaEnable(false);
+        User updatedUser = userRepository.save(user);
+        return UserMapper.MAPPER.toUserDto(updatedUser);
     }
 
    /* private UserDto persistUser(
