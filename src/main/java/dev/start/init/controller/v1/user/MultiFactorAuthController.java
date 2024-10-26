@@ -1,15 +1,12 @@
 package dev.start.init.controller.v1.user;
 
 import dev.samstevens.totp.exceptions.QrGenerationException;
-import dev.start.init.constants.user.UserConstants;
 import dev.start.init.dto.user.UserDto;
 import dev.start.init.entity.user.MultiFactorAuth;
 import dev.start.init.entity.user.User;
 import dev.start.init.enums.MultiFactorMethodType;
-import dev.start.init.exception.ResourceNotFoundException;
 import dev.start.init.exception.user.UserAlreadyExistsException;
 import dev.start.init.exception.user.UserNotFoundException;
-import dev.start.init.mapper.UserMapper;
 import dev.start.init.repository.user.MultiFactorAuthRepository;
 import dev.start.init.repository.user.UserRepository;
 import dev.start.init.service.mfa.EmailMfaService;
@@ -19,7 +16,6 @@ import dev.start.init.service.mfa.WhatsAppMfaService;
 import dev.start.init.service.user.UserService;
 import dev.start.init.util.AuthUtils;
 import dev.start.init.util.core.SecurityUtils;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -112,24 +108,47 @@ public class MultiFactorAuthController {
     * For whatsapp sms send and verify
     *
     * */
-
-    // Endpoint to send OTP
     @PostMapping("/send-otp-whatsapp")
     public ResponseEntity<String> sendOtp(@RequestParam("phoneNumber") String phoneNumber) {
         try {
-            smsMfaService.sendOtp(phoneNumber);
-            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
+            whatsAppMfaService.sendOtp(phoneNumber);
+            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber+" whatsapp");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error sending OTP: " + e.getMessage());
         }
     }
 
-    // Endpoint to verify OTP
     @PostMapping("/verify-otp-whatsapp")
     public ResponseEntity<String> verifyOtp(
             @RequestParam("phoneNumber") String phoneNumber,
             @RequestParam("otp") String otp) {
         boolean isValid = whatsAppMfaService.verifyOtp(phoneNumber, otp);
+        if (isValid) {
+            return ResponseEntity.ok("OTP verified successfully");
+        } else {
+            return ResponseEntity.status(400).body("Invalid OTP");
+        }
+    }
+ /*
+    * For sms send and verify
+    *
+    * */
+    @PostMapping("/send-otp-sms")
+    public ResponseEntity<String> sendOtpSms(@RequestParam("phoneNumber") String phoneNumber) {
+        try {
+            smsMfaService.sendOtp(phoneNumber);
+            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber+" inbox.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error sending OTP: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-otp-sms")
+    public ResponseEntity<String> verifySmsOtp(
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("otp") String otp) {
+
+        boolean isValid = smsMfaService.verifyOtp(otp,phoneNumber);
         if (isValid) {
             return ResponseEntity.ok("OTP verified successfully");
         } else {

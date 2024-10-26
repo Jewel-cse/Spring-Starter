@@ -6,15 +6,21 @@ import com.twilio.type.PhoneNumber;
 import dev.start.init.entity.user.MultiFactorAuth;
 import dev.start.init.entity.user.User;
 import dev.start.init.enums.MultiFactorMethodType;
+import dev.start.init.exception.user.UserNotFoundException;
 import dev.start.init.repository.user.MultiFactorAuthRepository;
+import dev.start.init.repository.user.UserRepository;
 import dev.start.init.service.mfa.SmsMfaService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 
 @Service
-@RequiredArgsConstructor
 public class SmsMfaServiceImpl extends OtpGenerator implements SmsMfaService {
     @Value("${twilio.account_sid}")
     private String accountSid;
@@ -25,17 +31,25 @@ public class SmsMfaServiceImpl extends OtpGenerator implements SmsMfaService {
     @Value("${twilio.phone_number}")
     private String twilioPhoneNumber;
 
-    private MultiFactorAuthRepository multiFactorAuthRepository;
+    @Value("${otp.expired.time}")
+    private Long otpExpiredDuration;
+
+    private final UserRepository userRepository;
+    private final MultiFactorAuthRepository multiFactorAuthRepository;
 
     // Initialize Twilio client
-    public SmsMfaServiceImpl( @Value("${twilio.account_sid}") String accountSid,
-                              @Value("${twilio.auth_token}") String authToken,
-                              @Value("${twilio.phone_number}") String twilioPhoneNumber,
-                              MultiFactorAuthRepository multiFactorAuthRepository
+    public SmsMfaServiceImpl(UserRepository userRepository,
+                             @Value("${twilio.account_sid}") String accountSid,
+                             @Value("${twilio.auth_token}") String authToken,
+                             @Value("${twilio.phone_number}") String twilioPhoneNumber,
+                             @Value("${otp.expired.time}") Long otpExpiredDuration,
+                             MultiFactorAuthRepository multiFactorAuthRepository
     ) {
+        this.userRepository = userRepository;
         this.accountSid = accountSid;
         this.authToken = authToken;
         this.twilioPhoneNumber = twilioPhoneNumber;
+        this.otpExpiredDuration = otpExpiredDuration;
         this.multiFactorAuthRepository = multiFactorAuthRepository;
         Twilio.init(accountSid, authToken);
     }
@@ -47,10 +61,26 @@ public class SmsMfaServiceImpl extends OtpGenerator implements SmsMfaService {
      * @return the generated SMS code
      */
     @Override
+    @Transactional
     public String sendOtp(String phoneNumber) {
-        //mfa table identify->by phone number -> save otp
+
+        Optional<MultiFactorAuth> multiFactorAuth= multiFactorAuthRepository.findByUserPhoneAndMethodType(phoneNumber,MultiFactorMethodType.SMS);
         String otp = generate6DigitOtp();
-        //otpData.put(phoneNumber, otp);
+        if (!phoneNumber.startsWith("+")) {
+            phoneNumber = "+" + phoneNumber;
+        }
+        MultiFactorAuth mfa = multiFactorAuth.isEmpty()?new MultiFactorAuth():multiFactorAuth.get();
+        if(multiFactorAuth.isEmpty()){
+            User user = userRepository.findByPhone(phoneNumber);
+            if(user == null){
+                throw  new UserNotFoundException("User not found with phone number: " + phoneNumber);
+            }
+            mfa = initializeMfaAuthEntity(user);
+        }
+
+        mfa.setVerificationCode(otp);
+        mfa.setCodeExpiresAt(LocalDateTime.now().plusSeconds(otpExpiredDuration));
+        multiFactorAuthRepository.save(mfa);
 
         String messageBody = "Your OTP code is: " + otp;
 
@@ -66,12 +96,28 @@ public class SmsMfaServiceImpl extends OtpGenerator implements SmsMfaService {
      * Verifies the SMS code against the stored code.
      *
      * @param inputCode  the code entered by the user
-     * @param storedCode the code stored in the system
      * @return true if the code matches, false otherwise
      */
     @Override
-    public boolean verifyOtp(String inputCode, String storedCode) {
-        return false;
+    public boolean verifyOtp(String inputCode,String phone) {
+        Optional<MultiFactorAuth> multiFactorAuth= multiFactorAuthRepository.findByUserPhoneAndMethodType(phone,MultiFactorMethodType.SMS);
+
+        if(multiFactorAuth.isEmpty() || !inputCode.equals(multiFactorAuth.get().getVerificationCode())){
+            return false;
+        }
+
+        //time gap is greater than -> valid
+        Long timeGapInSeconds = Duration.between(LocalDateTime.now(), multiFactorAuth.get().getCodeExpiresAt()).getSeconds();
+        if(timeGapInSeconds < 0){
+            throw new RuntimeException("OTP has expired.");
+        }
+        MultiFactorAuth mfa = multiFactorAuth.get();
+
+        //mfa.setVerificationCode(null);
+        mfa.setVerified(true);
+        mfa.setActive(true);
+        multiFactorAuthRepository.save(mfa);
+        return true;
     }
 
     /**
@@ -82,7 +128,7 @@ public class SmsMfaServiceImpl extends OtpGenerator implements SmsMfaService {
     public MultiFactorAuth initializeMfaAuthEntity(User user) {
         MultiFactorAuth multiFactorAuth = new MultiFactorAuth();
         multiFactorAuth.setUser(user);
-        multiFactorAuth.setMethodType(MultiFactorMethodType.WHATSAPP_SMS);
+        multiFactorAuth.setMethodType(MultiFactorMethodType.SMS);
 
         return multiFactorAuthRepository.save(multiFactorAuth);
     }

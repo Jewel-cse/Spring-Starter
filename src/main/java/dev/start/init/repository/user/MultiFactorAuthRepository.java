@@ -33,6 +33,9 @@ public interface MultiFactorAuthRepository extends JpaRepository<MultiFactorAuth
     @Query("SELECT Mfa FROM MultiFactorAuth Mfa WHERE Mfa.user.email = :email")
     Optional<MultiFactorAuth> findByEmail(String email);
 
+    @Query("select mfa from MultiFactorAuth  mfa where mfa.user.phone =:phoneNumber and mfa.methodType=:methodType")
+    Optional<MultiFactorAuth> findByUserPhoneAndMethodType(@Param("phoneNumber") String phoneNumber, @Param("methodType") MultiFactorMethodType methodType);
+
     @Modifying
     @Query("DELETE FROM MultiFactorAuth Mfa WHERE Mfa.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);

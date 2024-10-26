@@ -20,7 +20,7 @@ public interface SmsMfaService extends MfaService {
      * @param otp the code stored in the system
      * @return true if the code matches, false otherwise
      */
-    boolean verifyOtp(String phoneNumber, String otp);
+    boolean verifyOtp(String otp, String phoneNumber);
 
     MultiFactorAuth initializeMfaAuthEntity(User user);
 
