@@ -25,15 +25,18 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -114,6 +117,16 @@ public class UserController {
     private static final String AUTHORIZE =
             "isFullyAuthenticated()";
     //&& hasRole(T(org.dwasa.enums.RoleType).ROLE_ADMIN)
+
+    @PostMapping("/create")
+    public ResponseEntity<List<UserDto>> create(@Valid @RequestParam Integer userNumber){
+        return ResponseEntity.ok(userService.createDummyUser(userNumber));
+    }
+
+    @PostMapping("/send-invitation")
+    public ResponseEntity<?> makeInvite() throws TemplateException, MessagingException, IOException {
+        return ResponseEntity.ok(userService.sendInvitation());
+    }
 
     /**
      * Performs a search for users based on the provided search criteria.

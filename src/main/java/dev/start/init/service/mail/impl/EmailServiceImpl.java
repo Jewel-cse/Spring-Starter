@@ -3,7 +3,6 @@ package dev.start.init.service.mail.impl;
 import dev.start.init.dto.user.UserDto;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import dev.start.init.entity.user.User;
 import dev.start.init.service.mail.EmailService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
@@ -19,6 +18,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -109,6 +109,37 @@ public class EmailServiceImpl implements EmailService {
         helper.setTo(user.getEmail());
         helper.setSubject("Password Reset Request");
         MimeMessageHelper(message, helper, stringWriter, fromAddress, javaMailSender);
+    }
+
+    @Override
+    public void sendMarketingEmail(UserDto user, String productImageUrl, List<String> features, String ctaLink)
+            throws IOException, TemplateException, MessagingException {
+
+        // Set up email message
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        // Prepare data model for the template
+        Map<String, Object> model = new HashMap<>();
+        model.put("userName", user.getUsername());
+        model.put("productImageUrl", productImageUrl);
+        model.put("features", features);
+        model.put("ctaLink", ctaLink);
+        model.put("year", Year.now().getValue());
+
+        // Process template with data model
+        Template template = freemarkerConfig.getTemplate("promotion.ftl");
+        StringWriter stringWriter = new StringWriter();
+        template.process(model, stringWriter);
+
+        // Set email properties
+        helper.setTo(user.getEmail());
+        helper.setSubject("Exciting New Offer from VECTOR!");
+        helper.setText(stringWriter.toString(), true);
+        helper.setFrom(fromAddress);
+
+        // Send email
+        javaMailSender.send(message);
     }
 
     private static void MimeMessageHelper(MimeMessage message, MimeMessageHelper helper, StringWriter stringWriter, String fromAddress, JavaMailSender javaMailSender) throws MessagingException {

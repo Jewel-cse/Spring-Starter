@@ -3,6 +3,7 @@ package dev.start.init.service.user.impl;
 import dev.start.init.constants.CacheConstants;
 import dev.start.init.constants.user.UserConstants;
 import dev.start.init.dto.user.UserDto;
+import dev.start.init.entity.user.Role;
 import dev.start.init.entity.user.User;
 import dev.start.init.entity.user.UserHistory;
 import dev.start.init.enums.RoleType;
@@ -23,13 +24,18 @@ import dev.start.init.service.security.EncryptionService;
 import dev.start.init.service.security.JwtService;
 import dev.start.init.service.user.RoleService;
 import dev.start.init.service.user.UserService;
+import dev.start.init.util.MerketingUtils;
+import dev.start.init.util.UserUtils;
 import dev.start.init.util.core.ValidationUtils;
 
+import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import freemarker.template.TemplateException;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
@@ -65,6 +71,9 @@ public class UserServiceImpl  implements UserService {
     private final UserHistoryRepository userHistoryRepository;
     private final SmsMfaService smsMfaService;
     private final EmailMfaService emailMfaService;
+    private final EmailService emailService;
+
+
     /**
      * Create the userDto with the userDto instance given.
      *
@@ -431,6 +440,44 @@ public class UserServiceImpl  implements UserService {
         user.setMfaEnable(false);
         User updatedUser = userRepository.save(user);
         return UserMapper.MAPPER.toUserDto(updatedUser);
+    }
+
+    /**
+     * @param  userNumber
+     * @return
+     */
+    @Override
+    public List<UserDto> createDummyUser(Integer userNumber) {
+        List<User> users = new ArrayList<>();
+        Role role = roleRepository.findByName(RoleType.ROLE_USER.getName());
+        for(int i=0;i<userNumber;i++){
+            users.add(UserUtils.getDummyUser(false,role));
+        }
+        userRepository.saveAll(users);
+        return UserUtils.convertToUserDto(users);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Object sendInvitation() throws TemplateException, MessagingException, IOException {
+        List<User> userList = userRepository.findAll();
+        if(userList.isEmpty()) {
+            throw new UserNotFoundException(UserConstants.USER_NOT_FOUND);
+        }
+        String productImageUrl = MerketingUtils.getProductImageUrl();
+        List<String> features = MerketingUtils.getFeatureList();
+        String ctaLink = MerketingUtils.getCtaLink();
+
+        for (int i=0;i<userList.size();i++){
+            if(i==5)
+                break;
+            User user = userList.get(i);
+            emailService.sendMarketingEmail(UserMapper.MAPPER.toUserDto(user),productImageUrl,features,ctaLink);
+        }
+
+        return null;
     }
 
    /* private UserDto persistUser(

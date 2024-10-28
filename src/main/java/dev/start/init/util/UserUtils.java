@@ -16,10 +16,8 @@ import dev.start.init.service.impl.UserDetailsBuilder;
 import dev.start.init.util.core.ValidationUtils;
 import dev.start.init.web.payload.request.SignUpRequest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.function.Function;
 
 import net.datafaker.Faker;
@@ -36,17 +34,45 @@ import org.apache.commons.validator.routines.EmailValidator;
  */
 public final class UserUtils {
 
-    /** Maximum password length for the password generation. */
     public static final int PASSWORD_MAX_LENGTH = 15;
-
-    /** The Constant FAKER. */
+    private static final int PASSWORD_MIN_LENGTH = 6;
     private static final Faker FAKER = new Faker();
-
-    /** Minimum password length for the password generation. */
-    private static final int PASSWORD_MIN_LENGTH = 4;
 
     private UserUtils() {
         throw new AssertionError(ErrorConstants.NOT_INSTANTIABLE);
+    }
+
+    /**
+     * Generates a UserDto with random values using Faker.
+     *
+     * @param enabled whether the user account should be enabled
+     * @return UserDto with randomly generated details
+     */
+    public static User getDummyUser(final boolean enabled,Role role) {
+        UserDto user = new UserDto();
+        user.setPublicId(FAKER.idNumber().valid());
+        user.setUsername(FAKER.internet().username());
+        user.setPassword(FAKER.internet().password(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH));
+        user.setFirstName(FAKER.name().firstName());
+        user.setMiddleName(FAKER.name().firstName());
+        user.setLastName(FAKER.name().lastName());
+        user.setEmail(FAKER.internet().emailAddress());
+        user.setPhone(FAKER.phoneNumber().cellPhone());
+        user.setProfileImage(FAKER.avatar().image());
+        user.setFailedLoginAttempts(0);
+        user.setLastSuccessfulLogin(LocalDateTime.now().minusDays(FAKER.number().numberBetween(0, 30)));
+
+        if(enabled){
+            user.setEnabled(true);
+            user.setAccountNonExpired(true);
+            user.setAccountNonLocked(true);
+            user.setCredentialsNonExpired(true);
+        }
+        user.setMfaEnable(FAKER.bool().bool());
+
+        user.setRoles(Collections.singleton(role));
+
+        return UserMapper.MAPPER.toUser(user);
     }
 
     /**

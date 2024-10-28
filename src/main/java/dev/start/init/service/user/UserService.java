@@ -14,6 +14,7 @@ import java.util.Set;
 
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -124,4 +125,8 @@ public interface UserService {
 
     UserDto enableMfa(String publicId);
     UserDto disableMfa(String publicId);
+
+    List<UserDto> createDummyUser(@Valid Integer userNumber);
+
+    Object sendInvitation() throws TemplateException, MessagingException, IOException;
 }

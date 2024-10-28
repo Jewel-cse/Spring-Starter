@@ -6,6 +6,7 @@ import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Service interface for email operations.
@@ -30,5 +31,8 @@ public interface EmailService {
      * @param user the user to whom the password reset email will be sent
      */
     void sendPasswordResetEmail(UserDto user) throws Exception;
+
+    void sendMarketingEmail(UserDto user, String productImageUrl, List<String> features, String ctaLink)
+            throws IOException, TemplateException, MessagingException;
 }
 
