@@ -244,6 +244,15 @@
             <version>1.2</version>
         </dependency>
 
+        <!--Rabbit mq dependency-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+            <version>3.3.4</version>
+        </dependency>
+
+
+
     </dependencies>
 
 

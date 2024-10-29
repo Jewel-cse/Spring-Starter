@@ -15,6 +15,7 @@ import dev.start.init.mapper.UserMapper;
 import dev.start.init.repository.user.RoleRepository;
 import dev.start.init.repository.user.UserHistoryRepository;
 import dev.start.init.repository.user.UserRepository;
+import dev.start.init.service.amqp.Producer;
 import dev.start.init.service.impl.UserDetailsBuilder;
 import dev.start.init.service.mail.EmailService;
 import dev.start.init.service.mfa.EmailMfaService;
@@ -34,6 +35,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import dev.start.init.web.payload.pojo.PromotionPayload;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +74,7 @@ public class UserServiceImpl  implements UserService {
     private final SmsMfaService smsMfaService;
     private final EmailMfaService emailMfaService;
     private final EmailService emailService;
+    private final Producer producer;
 
 
     /**
@@ -474,7 +477,8 @@ public class UserServiceImpl  implements UserService {
             if(i==5)
                 break;
             User user = userList.get(i);
-            emailService.sendMarketingEmail(UserMapper.MAPPER.toUserDto(user),productImageUrl,features,ctaLink);
+            producer.sendInvitation(new PromotionPayload(user,productImageUrl,features,ctaLink));
+            //emailService.sendMarketingEmail(UserMapper.MAPPER.toUserDto(user),productImageUrl,features,ctaLink);
         }
 
         return null;
