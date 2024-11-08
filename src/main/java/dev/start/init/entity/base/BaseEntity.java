@@ -26,9 +26,9 @@ import java.util.UUID;
  */
 @Data
 @MappedSuperclass
-@Audited
+//@Audited
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity<T> implements Serializable {
+public abstract class BaseEntity<T>  {
 
     @Column(name = "PUBLIC_ID", unique = true, nullable = false, updatable = false)
     protected String publicId;

@@ -16,7 +16,28 @@
     JWT (JSON Web Tokens) for stateless authentication.
     OAuth2 for secure API integration.
 
-3. Logging:**
+
+4. Caching:
+
+    Using Spring Cache abstraction with various providers (e.g., Redis, EhCache).
+    Caching frequently accessed data to improve performance.
+
+
+6. Monitoring and Metrics:
+
+   Integrating with monitoring tools like Prometheus and Grafana.
+   Using Spring Boot Actuator for health checks, metrics, and application insights.
+
+
+8. Testing:
+
+   Unit and integration testing with JUnit and Mockito.
+   Testing REST endpoints using MockMvc.
+
+
+
+
+3. Logging:*****
 
     Integrated logging with frameworks like Logback or Log4j.
     Different logging levels (INFO, DEBUG, ERROR).
@@ -29,38 +50,95 @@
             :bin/elasticsearch-create-enrollment-token -s kibana
         >after gives the token
 
-4. Caching:
-
-    Using Spring Cache abstraction with various providers (e.g., Redis, EhCache).
-    Caching frequently accessed data to improve performance.
-
-5. Asynchronous Processing:
+5. Asynchronous Processing:******
 
     Using @Async for running tasks asynchronously.
     Implementing message queues with RabbitMQ, Kafka, etc.
 
-6. Monitoring and Metrics:
-
-   Integrating with monitoring tools like Prometheus and Grafana.
-   Using Spring Boot Actuator for health checks, metrics, and application insights.
-
-7. Scheduling:**
+7. Scheduling:*****
 
    Task scheduling with @Scheduled.
    Running periodic tasks or cron jobs.
-
-8. Testing:
-
-   Unit and integration testing with JUnit and Mockito.
-   Testing REST endpoints using MockMvc.
-
-
-9. API Documentation:
-
-   Auto-generating API documentation with tools like Swagger/OpenAPI.
-   Describing endpoints, models, and request/response formats.
-
-10. File Handling:
+10. File Handling:*****
 
     Uploading and serving files.
     Handling file storage, either locally or with cloud services like AWS S3.
+
+
+************* Folder structure for Security ***************
+**********************************************************
+
+src/main/java/com/yourcompany/yourproject/
+│
+├── config/
+│   ├── SecurityConfig.java              // Security configuration
+│   ├── JwtConfig.java                   // JWT-specific configuration
+│   └── WebConfig.java                   // General web configurations (CORS, etc.)
+│
+├── controller/
+│   ├── AuthController.java              // Authentication endpoints (login, signup, etc.)
+│   ├── UserController.java              // User-related endpoints
+│   ├── AdminController.java             // Admin-specific endpoints
+│   └── PasswordController.java          // Password reset/forgot endpoints
+│
+├── dto/
+│   ├── AuthRequest.java                 // DTO for login request
+│   ├── AuthResponse.java                // DTO for login response
+│   ├── UserDto.java                     // DTO for user data transfer
+│   ├── PasswordResetRequest.java        // DTO for password reset request
+│   ├── PasswordResetResponse.java       // DTO for password reset response
+│   └── SignupRequest.java               // DTO for sign-up request
+│
+├── entity/
+│   ├── User.java                        // User entity
+│   ├── Role.java                        // Role entity
+│   ├── Permission.java                  // Permission entity
+│   └── PasswordResetToken.java          // Entity for password reset tokens
+│
+├── repository/
+│   ├── UserRepository.java              // Repository for User entity
+│   ├── RoleRepository.java              // Repository for Role entity
+│   ├── PermissionRepository.java        // Repository for Permission entity
+│   └── PasswordResetTokenRepository.java// Repository for PasswordResetToken entity
+│
+├── service/
+│   ├── AuthService.java                 // Authentication service
+│   ├── UserService.java                 // User-related business logic
+│   ├── RoleService.java                 // Role-related business logic
+│   ├── PermissionService.java           // Permission-related business logic
+│   ├── PasswordService.java **            // Password reset/forget service
+│   └── EmailService.java    **            // Service for sending emails (password reset, etc.)
+│
+├── security/
+│   ├── JwtTokenProvider.java            // JWT token provider
+│   ├── JwtAuthenticationFilter.java     // JWT authentication filter
+│   ├── CustomUserDetailsService.java    // Custom UserDetailsService
+│   ├── SecurityUtils.java               // Utility class for security-related operations
+│   └── CustomAccessDeniedHandler.java   // Handle access denied exceptions
+│
+├── util/
+│   ├── JwtUtil.java                     // Utility class for JWT operations
+│   └── AppUtil.java                     // General utility class (date formatting, etc.)
+│
+├── exception/
+│   ├── GlobalExceptionHandler.java      // Global exception handler
+│   ├── CustomException.java             // Custom exception class
+│   └── ErrorResponse.java               // Standardized error response format
+│
+├── audit/
+│   ├── AuditingEntityListener.java      // Entity listener for auditing
+│   └── AuditConfig.java                 // Configuration for auditing
+│
+├── YourProjectApplication.java          // Main Spring Boot application
+│
+└── resources/
+    ├── application.properties           // Application properties
+    ├── schema.sql                       // SQL schema for database setup
+    └── data.sql                         // Initial data (roles, permissions, etc.)
+│
+└── test/                                // Unit and integration tests
+    ├── controller/
+    ├── service/
+    ├── repository/
+    ├── security/
+    └── YourProjectApplicationTests.java // Main test class

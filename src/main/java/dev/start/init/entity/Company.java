@@ -1,5 +1,6 @@
 package dev.start.init.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.start.init.constants.SequenceConstants;
 import dev.start.init.entity.base.BaseEntity;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Data
@@ -27,21 +29,16 @@ public class Company extends BaseEntity<Long> {
             allocationSize = SequenceConstants.COMPANY_SEQUENCE_ALLOCATION)
     private Long id;
 
-    @NotBlank
-    @Size(min = 3,max = 100,message = "Company Name must required")
     private String comName;
 
     @Column(unique = true, nullable = false)
-    @NotBlank
-    @Size(min = 3,max = 50,message = "Company Code length should be between 3 to 50")
     private String comCode;
 
-    @NotNull
     private LocalDate comEstablished;
 
-//    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-//    @JsonManagedReference
-//    private List<Employee> employeeList;
+    /*@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Employee> employeeList;*/
 
     public Company(String ComName, String ComCode, LocalDate estDate) {
         this.comName = ComName;

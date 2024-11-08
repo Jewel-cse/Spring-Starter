@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="EmployeeIDCard" pageWidth="300" pageHeight="200" columnWidth="300"
+              leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="10">
+    <!-- Font and Style Definitions -->
+    <style name="boldText" isBold="true" fontSize="12"/>
+    <style name="normalText" fontSize="10"/>
+
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+
+    <!-- Title Band (Company Logo) -->
+    <title>
+        <band height="50">
+            <!-- Company Logo -->
+            <image>
+                <reportElement x="5" y="5" width="50" height="40"/>
+                <imageExpression><![CDATA[$P{CompanyLogo}]]></imageExpression>
+            </image>
+
+            <!-- Company Name -->
+            <textField>
+                <reportElement x="60" y="5" width="230" height="30"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{CompanyName}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <!-- Detail Band (Employee Information) -->
+    <detail>
+        <band height="120">
+
+            <!-- Employee Photo -->
+            <image>
+                <reportElement x="5" y="10" width="50" height="60"/>
+                <imageExpression><![CDATA[$P{EmployeePhoto}]]></imageExpression>
+            </image>
+
+            <!-- Employee Name -->
+            <textField>
+                <reportElement x="60" y="20" width="220" height="20"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{empName}]]></textFieldExpression>
+            </textField>
+
+            <!-- Employee Code -->
+            <textField>
+                <reportElement x="60" y="40" width="220" height="20"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Emp Code: " + $F{empCode}]]></textFieldExpression>
+            </textField>
+
+            <!-- Employee Designation -->
+            <textField>
+                <reportElement x="60" y="60" width="220" height="20"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{empDesignation}]]></textFieldExpression>
+            </textField>
+
+            <!-- Joining Date -->
+            <textField>
+                <reportElement x="60" y="80" width="220" height="20"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Joining Date: " + $F{joiningDate}.toString()]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </detail>
+</jasperReport>

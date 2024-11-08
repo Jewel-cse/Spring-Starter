@@ -2,13 +2,12 @@ package dev.start.init.service;
 
 import dev.start.init.annotation.Loggable;
 import dev.start.init.dto.EmployeeDto;
-import dev.start.init.dto.mapper.EmployeeMapper;
 import dev.start.init.entity.Company;
+import dev.start.init.mapper.EmployeeMapper;
 import dev.start.init.entity.Employee;
 import dev.start.init.repository.EmployeeRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.lang.Math.random;
 
 /**
  * Service class for managing {@link Employee} entities.
@@ -48,24 +44,27 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
 
+    @Autowired
+    public EmployeeService(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
+        this.employeeRepository = employeeRepository;
+        this.employeeMapper = employeeMapper;
+    }
+
     /**
-     * Initialize  {@link Employee} entity with some values.
+     * Initialize  {@link Employee} entity with some records.
      *
      * @return the created table
      */
-    @PostConstruct
+
+/*    //@PostConstruct
     @Loggable(level = "trace")
     public void initEmployeeTable(){
         List<Employee>  employees= IntStream.rangeClosed(1,50)
                 .mapToObj(i->new Employee("empCode_"+i,"empName_"+i,"empDesig_"+i,new BigDecimal(Math.random()*100000),true,LocalDate.now().minusDays(i)))
                 .collect(Collectors.toList());
         employeeRepository.saveAll(employees);
-    }
-    @Autowired
-    public EmployeeService(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
-        this.employeeRepository = employeeRepository;
-        this.employeeMapper = employeeMapper;
-    }
+    }*/
+
 
     /**
      * Creates a new {@link Employee} entity from an {@link EmployeeDto}.

@@ -1,7 +1,7 @@
 package dev.start.init.service.address.impl;
 
 import dev.start.init.dto.AddressDto;
-import dev.start.init.dto.mapper.AddressMapper;
+import dev.start.init.mapper.AddressMapper;
 import dev.start.init.entity.Address;
 import dev.start.init.exception.ResourceNotFoundException;
 import dev.start.init.repository.AddressRepository;

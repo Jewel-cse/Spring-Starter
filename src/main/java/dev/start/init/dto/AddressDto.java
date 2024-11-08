@@ -1,8 +1,6 @@
 package dev.start.init.dto;
 
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,8 +12,8 @@ import lombok.EqualsAndHashCode;
  * @since 1.0
  */
 @Data
-@EqualsAndHashCode()
-public class AddressDto  {
+@EqualsAndHashCode(callSuper = false)
+public class AddressDto extends BaseDto  {
 
     private String village;
 

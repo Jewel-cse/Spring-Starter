@@ -12,4 +12,22 @@ public class InitApplication {
 		SpringApplication.run(InitApplication.class, args);
 	}
 
+	//http://localhost:5173 to 8080
+	//Cross origin request (COR) not allow by default
+	//Allow all request only from http://localhost:3000
+	/*@Bean
+	public WebMvcConfigurer corsConfigurer(){
+		return new WebMvcConfigurer(){
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+						.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS")
+						.allowCredentials(true)  //// Allow cookies for cross-origin requests
+						.allowedHeaders("Content-Type", "Authorization")
+						.allowedOrigins("http://localhost:3000/");
+			}
+
+		};
+	}*/
+
 }

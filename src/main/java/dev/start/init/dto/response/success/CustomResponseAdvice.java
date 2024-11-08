@@ -56,22 +56,35 @@ public class CustomResponseAdvice implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
+        // Check if the response is from a RestController
         if (returnType.getContainingClass().isAnnotationPresent(RestController.class)) {
+            // Skip if the method has the IgnoreResponseBinding annotation
             if (!returnType.getMethod().isAnnotationPresent(IgnoreResponseBinding.class)) {
-                if (!(body instanceof ErrorResponse<?>) && !(body instanceof SuccessResponse) &&
-                        !(body instanceof Resource) && !(body instanceof ByteArrayResource) &&
-                        !(body instanceof InputStreamResource)) {
-                    if (body instanceof Page<?>) {
-                        System.out.println("it is page type");
-                        return new SuccessResponse<>(body);
-                    }
+                // Check for known response types to prevent wrapping
+                if (body instanceof ErrorResponse || body instanceof SuccessResponse) {
+                    return body; // Return these types as it is
+                }
+
+                // Check for binary responses
+                if (body instanceof byte[] || body instanceof ByteArrayResource ||
+                        body instanceof InputStreamResource || body instanceof org.springframework.core.io.Resource ||
+                        body instanceof String) {
+                    // If it's a byte array, we can just return it
+                    return body;
+                }
+
+                // Handle paginated responses
+                if (body instanceof Page<?>) {
                     return new SuccessResponse<>(body);
                 }
+
+                // Wrap other responses in a SuccessResponse
+                return new SuccessResponse<>(body);
             }
         }
+        // Return the body unchanged if no conditions were met
         return body;
     }
-
 
 }
 

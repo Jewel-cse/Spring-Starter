@@ -107,6 +107,9 @@ public class SuccessDTO<T> implements java.io.Serializable {
         if (this.body instanceof Map) this.length = ((Map<?,?>) this.body).size();
         if (this.body instanceof Map) this.length = ((Map<?,?>) this.body).size();
     }
+    public SuccessDTO(String message) {
+        this.message = message;
+    }
 
 }
 

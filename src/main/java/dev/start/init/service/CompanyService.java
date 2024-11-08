@@ -1,10 +1,9 @@
 package dev.start.init.service;
 
 import dev.start.init.dto.CompanyDto;
-import dev.start.init.dto.mapper.CompanyMapper;
+import dev.start.init.mapper.CompanyMapper;
 import dev.start.init.entity.Company;
 import dev.start.init.repository.CompanyRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
