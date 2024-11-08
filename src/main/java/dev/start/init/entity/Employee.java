@@ -44,4 +44,8 @@ public class Employee extends BaseEntity<Long>  {
     @ManyToOne(targetEntity = Company.class,fetch = FetchType.LAZY)
     @JoinColumn(name = "companyId",referencedColumnName = "id")
     private Company company;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_address_id",referencedColumnName = "id",unique = true)
+    private Address address;
 }
