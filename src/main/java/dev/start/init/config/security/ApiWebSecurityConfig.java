@@ -60,6 +60,10 @@ public class ApiWebSecurityConfig {
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         requests -> {
+                            //allow websocket end point to testing
+                            requests.requestMatchers(
+                                    new AntPathRequestMatcher("ws://localhost:8080/ws/chat")
+                            ).permitAll();
                             // Allow public access to Swagger/OpenAPI documentation endpoints
                             requests.requestMatchers(
                                             new AntPathRequestMatcher("/v3/api-docs/**"),
