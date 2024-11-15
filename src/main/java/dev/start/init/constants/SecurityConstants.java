@@ -75,6 +75,7 @@ public final class SecurityConstants {
             String.join("/", ContactConstants.CONTACT_URL_MAPPING, "**"),
             String.join("/", PasswordConstants.PASSWORD_RESET_ROOT_MAPPING, "**"),
     };
+    public static final List<String> ALLOWED_ORIGINS= List.of("*");
 
     private SecurityConstants() {
         throw new AssertionError(ErrorConstants.NOT_INSTANTIABLE);

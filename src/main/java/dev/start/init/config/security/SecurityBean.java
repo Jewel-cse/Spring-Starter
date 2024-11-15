@@ -72,8 +72,9 @@ public class SecurityBean {
         setExposedHeaders(props, corsConfiguration);
         setAllowedHeaders(props, corsConfiguration);
         setAllowedMethods(props, corsConfiguration);
+        setAllowedOrigins(props, corsConfiguration);
+
         corsConfiguration.setAllowedOriginPatterns(props.getAllowedPatterns());
-        corsConfiguration.setAllowedOrigins(props.getAllowedOrigins());
 
         var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration(SecurityConstants.API_ROOT_URL_MAPPING, corsConfiguration);
@@ -178,6 +179,14 @@ public class SecurityBean {
             corsConfig.setAllowedMethods(SecurityConstants.ALLOWED_HTTP_METHODS);
         } else {
             corsConfig.setAllowedMethods(props.getAllowedMethods());
+        }
+    }
+
+    private void setAllowedOrigins(CorsConfigProperties props, CorsConfiguration corsConfig) {
+        if (CollectionUtils.isEmpty(props.getAllowedOrigins())) {
+            corsConfig.setAllowedOrigins(SecurityConstants.ALLOWED_ORIGINS);
+        }else {
+            corsConfig.setAllowedOrigins(props.getAllowedOrigins());
         }
     }
 }
